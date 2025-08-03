@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pacu Konten - Integrasi Facebook</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background: #f3f4f6;
+            min-height: 100vh;
+        }
+        .card-gradient { background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%); }
+        .header-gradient { background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%); }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .skeleton {
+            background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+            background-size: 200% 100%;
+            animation: loading-shimmer 1.5s infinite;
+        }
+        @keyframes loading-shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        .main-tab {
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+        .main-tab.active {
+            color: #4f46e5;
+            border-bottom-color: #4f46e5;
+        }
+        .tab-active { border-color: #4f46e5; color: #4f46e5; background-color: #eef2ff; }
+        .tab-inactive { border-color: transparent; color: #6b7280; }
+        
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(17, 24, 39, 0.5);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 50; backdrop-filter: blur(4px);
+            transition: opacity 0.3s ease-in-out;
+        }
+        .modal-content {
+            background-color: white; padding: 1.5rem; border-radius: 1rem;
+            width: 90%; max-width: 500px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transform: scale(0.95); opacity: 0;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .modal-overlay:not(.hidden) .modal-content { transform: scale(1); opacity: 1; }
+        .lang-btn.active { background-color: #4f46e5; color: white; }
+        
+        .content-card {
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+        .content-card:hover {
+            transform: translateY(-3px);
+            border-left-color: #4f46e5;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .reasoning-panel {
+            max-height: 0; overflow: hidden;
+            transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+        }
+        .reasoning-panel.open { max-height: 500px; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        #imagePreview {
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .bouncing-loader {
+            display: flex;
+            justify-content: center;
+        }
+        .bouncing-loader > div {
+            width: 1rem;
+            height: 1rem;
+            margin: 0.75rem 0.25rem;
+            background: #4f46e5;
+            border-radius: 50%;
+            animation: bouncing-loader 0.6s infinite alternate;
+        }
+        .bouncing-loader > div:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .bouncing-loader > div:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        @keyframes bouncing-loader {
+            to {
+                opacity: 0.1;
+                transform: translateY(-1rem);
+            }
+        }
+    </style>
+</head>
+<body class="text-gray-900">
+    <!-- Facebook SDK Script -->
+    <script>
+        window.fbAsyncInit = function() {
+            // IMPORTANT: Replace 'YOUR_APP_ID' with your actual App ID from the Meta Developer Dashboard.
+            const appId = 'YOUR_APP_ID'; 
+
+            FB.init({
+                appId      : appId,
+                cookie     : true,
+                xfbml      : true,
+                version    : 'v18.0' // Use the latest API version
+            });
+            
+            FB.AppEvents.logPageView();   
+        };
+
+        (function(d, s, id){
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) {return;}
+            js = d.createElement(s); js.id = id;
+            js.src = "https://connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    </script>
+
+    <div class="container mx-auto max-w-6xl p-4 sm:p-6">
+        <!-- Header -->
+        <header class="header-gradient text-white rounded-2xl p-6 mb-8 shadow-lg relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-purple-500 rounded-full opacity-20 transform translate-x-16 -translate-y-16"></div>
+            <div class="absolute bottom-0 left-0 w-48 h-48 bg-indigo-500 rounded-full opacity-20 transform -translate-x-24 translate-y-16"></div>
+            <div class="relative z-10 flex flex-col md:flex-row justify-between items-center">
+                <div class="text-center md:text-left mb-6 md:mb-0">
+                    <h1 class="text-3xl md:text-4xl font-bold" data-lang-key="mainTitle">Pacu Konten</h1>
+                    <p class="mt-2 text-base md:text-lg text-indigo-100" data-lang-key="subtitle">Suite Kreatif Berbasis AI untuk Konten Anda</p>
+                </div>
+                <div class="flex bg-white bg-opacity-20 backdrop-blur-sm rounded-lg p-1">
+                    <button id="lang-id" class="lang-btn px-4 py-1.5 text-sm font-semibold rounded-md transition-colors duration-300">ID</button>
+                    <button id="lang-en" class="lang-btn px-4 py-1.5 text-sm font-semibold rounded-md transition-colors duration-300">EN</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Tab Navigation -->
+        <div class="bg-white rounded-xl shadow-md p-2 mb-8">
+            <div class="flex justify-around border-b border-gray-200">
+                <button class="main-tab flex-1 py-3 px-2 font-semibold text-gray-600 active" data-tab="planner">
+                    <span data-lang-key="tabPlanner">Perencana Kampanye</span>
+                </button>
+                <button class="main-tab flex-1 py-3 px-2 font-semibold text-gray-600" data-tab="crafter">
+                    <span data-lang-key="tabCrafter">Perajin Konten</span>
+                </button>
+                <button class="main-tab flex-1 py-3 px-2 font-semibold text-gray-600" data-tab="analyzer">
+                    <span data-lang-key="tabAnalyzer">Analisis Viral</span>
+                </button>
+                <!-- NEW: Dashboard Tab (initially hidden or disabled) -->
+                 <button class="main-tab flex-1 py-3 px-2 font-semibold text-gray-400 cursor-not-allowed" data-tab="dashboard" id="dashboardTab" title="Hubungkan Akun Facebook untuk Mengaktifkan">
+                    <span data-lang-key="tabDashboard">Dashboard</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Tab Content -->
+        <main>
+            <!-- Campaign Planner Tab -->
+            <div id="planner-content" class="tab-content">
+                <!-- Content from original file... -->
+            </div>
+
+            <!-- Content Crafter Tab -->
+            <div id="crafter-content" class="tab-content hidden">
+                 <!-- Content from original file... -->
+                 <!-- NEW: Publication buttons will be added here later -->
+            </div>
+
+            <!-- Viral Analyzer Tab -->
+            <div id="analyzer-content" class="tab-content hidden">
+                 <!-- Content from original file... -->
+            </div>
+            
+            <!-- NEW: Dashboard Content -->
+            <div id="dashboard-content" class="tab-content hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-8 text-center">
+                    <h2 class="text-xl font-bold mb-4">Dashboard Performa Facebook</h2>
+                    <p class="text-gray-600">Hubungkan akun Facebook Anda untuk melihat analitik performa halaman Anda di sini.</p>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Global Buttons -->
+        <div class="mt-8 pt-6 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p class="text-sm text-gray-500">© 2025 Pacu Konten by tarendrastudio</p>
+            <div class="flex gap-3 flex-wrap justify-center">
+                <!-- NEW: Facebook Login Button -->
+                <button id="fbLoginBtn" class="bg-blue-600 border border-blue-600 text-white text-sm py-2 px-3 rounded-lg hover:bg-blue-700 transition-all flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/></svg>
+                    <span data-lang-key="fbLoginBtn">Hubungkan Facebook</span>
+                </button>
+                <button id="apiKeyBtn" class="bg-white border border-gray-300 text-gray-700 text-sm py-2 px-3 rounded-lg hover:bg-gray-100 transition-all flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd" /></svg>
+                    <span data-lang-key="apiKeyBtn">Pengaturan API Key</span>
+                </button>
+                <button id="tutorialBtn" class="bg-white border border-gray-300 text-gray-700 text-sm py-2 px-3 rounded-lg hover:bg-gray-100 transition-all flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" /></svg>
+                    <span data-lang-key="tutorialBtn">Cara Penggunaan</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="fixed bottom-5 right-5 bg-gray-900 text-white py-3 px-5 rounded-lg shadow-lg transition-all duration-300 transform translate-y-20 opacity-0 z-50"></div>
+
+        <!-- Modals -->
+        <div id="apiKeyModal" class="modal-overlay hidden">
+            <!-- Content from original file... -->
+        </div>
+        <div id="tutorialModal" class="modal-overlay hidden">
+            <!-- Content from original file... -->
+        </div>
+        <div id="exportModal" class="modal-overlay hidden">
+            <!-- Content from original file... -->
+        </div>
+        <div id="visualHookModal" class="modal-overlay hidden">
+            <!-- Content from original file... -->
+        </div>
+        
+        <!-- NEW: Facebook Pages Modal -->
+        <div id="fbPagesModal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <h3 class="text-lg font-bold mb-4" data-lang-key="fbPagesModalTitle">Pilih Halaman Facebook</h3>
+                <p class="text-sm text-gray-600 mb-4" data-lang-key="fbPagesModalDesc">Pilih halaman yang ingin Anda kelola dengan Pacu Konten.</p>
+                <div id="fbPagesList" class="space-y-2 max-h-60 overflow-y-auto border p-3 rounded-lg">
+                    <!-- Facebook Pages will be dynamically inserted here -->
+                    <p class="text-gray-500">Memuat halaman...</p>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button id="closeFbPagesModalBtn" class="bg-gray-200 text-gray-800 font-semibold py-2.5 px-5 rounded-lg hover:bg-gray-300 transition" data-lang-key="cancelBtn">Batal</button>
+                    <button id="saveFbPagesBtn" class="bg-blue-600 text-white font-semibold py-2.5 px-5 rounded-lg hover:bg-blue-700 transition" data-lang-key="saveBtn">Simpan Pilihan</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- I18n & Language Management ---
+        const translations = {
+            id: {
+                // ... (all existing 'id' translations)
+                tabDashboard: "Dashboard",
+                fbLoginBtn: "Hubungkan Facebook",
+                fbLogoutBtn: "Putuskan Facebook",
+                fbPagesModalTitle: "Pilih Halaman Facebook",
+                fbPagesModalDesc: "Pilih halaman yang ingin Anda kelola dengan Pacu Konten.",
+                toastFBLoginSuccess: "Berhasil terhubung dengan Facebook!",
+                toastFBLoginFail: "Gagal terhubung dengan Facebook.",
+                toastFBNoPages: "Tidak ada Halaman Facebook yang ditemukan.",
+            },
+            en: {
+                // ... (all existing 'en' translations)
+                tabDashboard: "Dashboard",
+                fbLoginBtn: "Connect Facebook",
+                fbLogoutBtn: "Disconnect Facebook",
+                fbPagesModalTitle: "Select Facebook Pages",
+                fbPagesModalDesc: "Choose the pages you want to manage with Pacu Konten.",
+                toastFBLoginSuccess: "Successfully connected to Facebook!",
+                toastFBLoginFail: "Failed to connect to Facebook.",
+                toastFBNoPages: "No Facebook Pages found.",
+            }
+        };
+        // The rest of the translation object should be copied from the original file
+        
+        // --- DOM Elements ---
+        const DOMElements = {
+            // ... (all existing DOM elements)
+            fbLoginBtn: document.getElementById('fbLoginBtn'),
+            fbPagesModal: document.getElementById('fbPagesModal'),
+            closeFbPagesModalBtn: document.getElementById('closeFbPagesModalBtn'),
+            saveFbPagesBtn: document.getElementById('saveFbPagesBtn'),
+            fbPagesList: document.getElementById('fbPagesList'),
+            dashboardTab: document.getElementById('dashboardTab'),
+        };
+
+        // --- Event Listeners ---
+        function setupEventListeners() {
+            // ... (all existing event listeners)
+            DOMElements.fbLoginBtn.addEventListener('click', handleFacebookLogin);
+            DOMElements.closeFbPagesModalBtn.addEventListener('click', () => toggleModal(DOMElements.fbPagesModal, false));
+            DOMElements.saveFbPagesBtn.addEventListener('click', saveSelectedPages);
+        }
+
+        // --- Facebook Integration Functions ---
+        
+        // This function is called when the user clicks the "Hubungkan Facebook" button.
+        function handleFacebookLogin() {
+            // Check if the FB object is available
+            if (typeof FB === 'undefined') {
+                showToast("Facebook SDK belum siap. Coba lagi sesaat.");
+                return;
+            }
+
+            FB.login(function(response) {
+                if (response.authResponse) {
+                    // User is logged in and has granted permissions.
+                    console.log('Welcome!  Fetching your information.... ');
+                    showToast(translations[currentLanguage].toastFBLoginSuccess);
+                    fetchFacebookPages();
+                } else {
+                    // User cancelled login or did not fully authorize.
+                    console.log('User cancelled login or did not fully authorize.');
+                    showToast(translations[currentLanguage].toastFBLoginFail);
+                }
+            }, {scope: 'public_profile,email,pages_show_list,pages_read_engagement,pages_manage_posts'});
+            // The 'scope' parameter requests necessary permissions.
+        }
+
+        // Fetches the list of Facebook Pages managed by the user.
+        function fetchFacebookPages() {
+            toggleModal(DOMElements.fbPagesModal, true);
+            DOMElements.fbPagesList.innerHTML = '<p class="text-gray-500">Memuat halaman...</p>';
+
+            FB.api('/me/accounts', function(response) {
+                if (response && !response.error) {
+                    if (response.data && response.data.length > 0) {
+                        let pagesHTML = response.data.map(page => `
+                            <label class="flex items-center p-2 rounded-md hover:bg-gray-100 cursor-pointer">
+                                <input type="checkbox" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" value="${page.id}" data-token="${page.access_token}" data-name="${page.name}">
+                                <span class="ml-3 text-sm font-medium text-gray-800">${page.name}</span>
+                            </label>
+                        `).join('');
+                        DOMElements.fbPagesList.innerHTML = pagesHTML;
+                    } else {
+                        DOMElements.fbPagesList.innerHTML = `<p class="text-gray-500">${translations[currentLanguage].toastFBNoPages}</p>`;
+                    }
+                } else {
+                    console.error('Error fetching pages:', response.error);
+                    DOMElements.fbPagesList.innerHTML = `<p class="text-red-500">Gagal memuat halaman. Coba login ulang.</p>`;
+                }
+            });
+        }
+        
+        // Saves the selected pages to localStorage (or later, to a database).
+        function saveSelectedPages() {
+            const selectedPages = [];
+            document.querySelectorAll('#fbPagesList input[type="checkbox"]:checked').forEach(checkbox => {
+                selectedPages.push({
+                    id: checkbox.value,
+                    name: checkbox.getAttribute('data-name'),
+                    accessToken: checkbox.getAttribute('data-token') // IMPORTANT: Handle this token securely!
+                });
+            });
+
+            if (selectedPages.length > 0) {
+                // For now, we save to localStorage. In a real app, this should be more secure.
+                localStorage.setItem('managedFBPages', JSON.stringify(selectedPages));
+                showToast(`Berhasil menyimpan ${selectedPages.length} halaman.`);
+                toggleModal(DOMElements.fbPagesModal, false);
+                updateUIAfterLogin();
+            } else {
+                showToast("Tidak ada halaman yang dipilih.");
+            }
+        }
+
+        // Updates the UI elements after a successful login and page selection.
+        function updateUIAfterLogin() {
+            const pages = JSON.parse(localStorage.getItem('managedFBPages'));
+            if (pages && pages.length > 0) {
+                DOMElements.fbLoginBtn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/></svg>
+                    <span>Terhubung (${pages.length} Hal.)</span>
+                `;
+                DOMElements.fbLoginBtn.classList.replace('bg-blue-600', 'bg-green-600');
+                
+                // Enable the dashboard tab
+                DOMElements.dashboardTab.classList.remove('text-gray-400', 'cursor-not-allowed');
+                DOMElements.dashboardTab.title = "Lihat Dashboard Performa";
+            }
+        }
+
+        // --- Main Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // ... (existing initialization code like setLanguage, loadDraft, etc.)
+            setupEventListeners();
+            updateUIAfterLogin(); // Check if user was already logged in on page load
+        });
+
+        // --- Placeholder for other functions from original file ---
+        // Make sure to copy all other functions like setLanguage, apiCall, renderAllContent, etc.
+        // from your original file to here to maintain all functionality.
+    </script>
+</body>
+</html>
