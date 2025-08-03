@@ -326,11 +326,14 @@
 
         async function apiCall(prompt, imageBase64 = null) {
             const apiKey = localStorage.getItem('geminiApiKey') || "";
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent?key=${apiKey}`;
+            // UPDATED: Use a newer, more reliable multimodal model
+            const modelName = 'gemini-1.5-flash-latest';
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
             
             let parts = [{ text: prompt }];
             if (imageBase64) {
-                parts.push({ inline_data: { mime_type: 'image/jpeg', data: imageBase64.split(',')[1] } });
+                // UPDATED: Corrected the payload key from 'inline_data' to 'inlineData'
+                parts.push({ inlineData: { mime_type: 'image/jpeg', data: imageBase64.split(',')[1] } });
             }
 
             const payload = { contents: [{ parts }] };
@@ -342,13 +345,17 @@
             }
             const result = await response.json();
             if (result.candidates?.[0]?.content?.parts?.[0]?.text) {
-                // Try to parse as JSON, if it fails, return as text
+                // UPDATED: More robust JSON parsing and error handling
                 try {
-                    return JSON.parse(result.candidates[0].content.parts[0].text.replace(/```json/g, '').replace(/```/g, ''));
+                    const cleanedText = result.candidates[0].content.parts[0].text.replace(/^```json\s*|```\s*$/g, '');
+                    return JSON.parse(cleanedText);
                 } catch (e) {
                     return { text: result.candidates[0].content.parts[0].text };
                 }
             } else {
+                if (result.error) {
+                    throw new Error(`API Error: ${result.error.message}`);
+                }
                 throw new Error("Invalid or empty response structure from AI.");
             }
         }
