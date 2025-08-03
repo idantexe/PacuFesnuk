@@ -10,73 +10,32 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            background: #f3f4f6;
-            min-height: 100vh;
-        }
+        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; background: #f3f4f6; min-height: 100vh; }
         .card-gradient { background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%); }
         .header-gradient { background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%); }
         .fade-in { animation: fadeIn 0.5s ease-in-out; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .main-tab {
-            transition: all 0.3s ease;
-            border-bottom: 3px solid transparent;
-        }
-        .main-tab.active {
-            color: #4f46e5;
-            border-bottom-color: #4f46e5;
-        }
-        .tab-active { border-color: #4f46e5; color: #4f46e5; background-color: #eef2ff; }
-        .tab-inactive { border-color: transparent; color: #6b7280; }
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(17, 24, 39, 0.5);
-            display: flex; align-items: center; justify-content: center;
-            z-index: 50; backdrop-filter: blur(4px);
-            transition: opacity 0.3s ease-in-out;
-        }
-        .modal-content {
-            background-color: white; padding: 1.5rem; border-radius: 1rem;
-            width: 90%; max-width: 500px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            transform: scale(0.95); opacity: 0;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .main-tab { transition: all 0.3s ease; border-bottom: 3px solid transparent; }
+        .main-tab.active { color: #4f46e5; border-bottom-color: #4f46e5; }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(17, 24, 39, 0.5); display: flex; align-items: center; justify-content: center; z-index: 50; backdrop-filter: blur(4px); transition: opacity 0.3s ease-in-out; }
+        .modal-content { background-color: white; padding: 1.5rem; border-radius: 1rem; width: 90%; max-width: 500px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); transform: scale(0.95); opacity: 0; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .modal-overlay:not(.hidden) .modal-content { transform: scale(1); opacity: 1; }
         .bouncing-loader { display: flex; justify-content: center; }
-        .bouncing-loader > div {
-            width: 1rem; height: 1rem; margin: 0.75rem 0.25rem;
-            background: #4f46e5; border-radius: 50%;
-            animation: bouncing-loader 0.6s infinite alternate;
-        }
+        .bouncing-loader > div { width: 1rem; height: 1rem; margin: 0.75rem 0.25rem; background: #4f46e5; border-radius: 50%; animation: bouncing-loader 0.6s infinite alternate; }
         .bouncing-loader > div:nth-child(2) { animation-delay: 0.2s; }
         .bouncing-loader > div:nth-child(3) { animation-delay: 0.4s; }
         @keyframes bouncing-loader { to { opacity: 0.1; transform: translateY(-1rem); } }
+        #imagePreview { background-size: contain; background-position: center; background-repeat: no-repeat; }
     </style>
 </head>
 <body class="text-gray-900">
     <!-- Facebook SDK Script -->
     <script>
         window.fbAsyncInit = function() {
-            // Your App ID is inserted here.
             const appId = '1058993726210996'; 
-
-            FB.init({
-                appId      : appId,
-                cookie     : true,
-                xfbml      : true,
-                version    : 'v18.0' // Use the latest API version
-            });
-            
+            FB.init({ appId: appId, cookie: true, xfbml: true, version: 'v18.0' });
             FB.AppEvents.logPageView();   
         };
-
         (function(d, s, id){
             var js, fjs = d.getElementsByTagName(s)[0];
             if (d.getElementById(id)) {return;}
@@ -88,7 +47,7 @@
 
     <div class="container mx-auto max-w-6xl p-4 sm:p-6">
         <!-- Header -->
-        <header class="header-gradient text-white rounded-2xl p-6 mb-8 shadow-lg relative overflow-hidden">
+        <header class="header-gradient text-white rounded-2xl p-6 mb-8 shadow-lg">
             <div class="relative z-10 flex flex-col md:flex-row justify-between items-center">
                 <div class="text-center md:text-left mb-6 md:mb-0">
                     <h1 class="text-3xl md:text-4xl font-bold" data-lang-key="mainTitle">Pacu Konten</h1>
@@ -104,85 +63,123 @@
         <!-- Main Tab Navigation -->
         <div class="bg-white rounded-xl shadow-md p-2 mb-8">
             <div class="flex justify-around border-b border-gray-200">
-                <button class="main-tab flex-1 py-3 px-2 font-semibold text-gray-600 active" data-tab="planner">
-                    <span data-lang-key="tabPlanner">Perencana Kampanye</span>
-                </button>
-                <button class="main-tab flex-1 py-3 px-2 font-semibold text-gray-600" data-tab="crafter">
-                    <span data-lang-key="tabCrafter">Perajin Konten</span>
-                </button>
-                <button class="main-tab flex-1 py-3 px-2 font-semibold text-gray-600" data-tab="analyzer">
-                    <span data-lang-key="tabAnalyzer">Analisis Viral</span>
-                </button>
-                 <button class="main-tab flex-1 py-3 px-2 font-semibold text-gray-400 cursor-not-allowed" data-tab="dashboard" id="dashboardTab" title="Hubungkan Akun Facebook untuk Mengaktifkan">
-                    <span data-lang-key="tabDashboard">Dashboard</span>
-                </button>
+                <button class="main-tab flex-1 py-3 px-2 font-semibold text-gray-600 active" data-tab="planner"><span data-lang-key="tabPlanner">Perencana Kampanye</span></button>
+                <button class="main-tab flex-1 py-3 px-2 font-semibold text-gray-600" data-tab="crafter"><span data-lang-key="tabCrafter">Perajin Konten</span></button>
+                <button class="main-tab flex-1 py-3 px-2 font-semibold text-gray-600" data-tab="analyzer"><span data-lang-key="tabAnalyzer">Analisis Viral</span></button>
+                <button class="main-tab flex-1 py-3 px-2 font-semibold text-gray-400 cursor-not-allowed" data-tab="dashboard" id="dashboardTab" title="Hubungkan Akun Facebook untuk Mengaktifkan"><span data-lang-key="tabDashboard">Dashboard</span></button>
             </div>
         </div>
 
         <!-- Main Content Area -->
         <main>
-            <!-- All tab content will be dynamically loaded here from the original file -->
             <!-- Campaign Planner Tab -->
             <div id="planner-content" class="tab-content">
-                <!-- Stats Section -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                    <div class="bg-white p-4 rounded-xl shadow-md border border-gray-100 flex items-center">
+                    <div class="bg-white p-4 rounded-xl shadow-md flex items-center">
                         <div class="bg-indigo-100 p-3 rounded-lg mr-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg></div>
                         <div><p class="text-gray-500 text-sm" data-lang-key="statCampaigns">Kampanye Dibuat</p><p class="text-2xl font-bold" id="campaignCount">0</p></div>
                     </div>
-                    <div class="bg-white p-4 rounded-xl shadow-md border border-gray-100 flex items-center">
+                    <div class="bg-white p-4 rounded-xl shadow-md flex items-center">
                         <div class="bg-green-100 p-3 rounded-lg mr-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905a3.61 3.61 0 01-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" /></svg></div>
                         <div><p class="text-gray-500 text-sm" data-lang-key="statFeedback">Umpan Balik Positif</p><p class="text-2xl font-bold" id="positiveFeedback">0%</p></div>
                     </div>
-                    <div class="bg-white p-4 rounded-xl shadow-md border border-gray-100 flex items-center">
+                    <div class="bg-white p-4 rounded-xl shadow-md flex items-center">
                         <div class="bg-blue-100 p-3 rounded-lg mr-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg></div>
                         <div><p class="text-gray-500 text-sm" data-lang-key="statContent">Konten Terbantu</p><p class="text-2xl font-bold" id="contentHelped">0</p></div>
                     </div>
                 </div>
-                <div id="campaignPlanner" class="card-gradient p-4 sm:p-6 rounded-2xl shadow-lg mb-8 border border-gray-200">
-                    <h2 class="text-xl font-semibold mb-5 text-gray-800 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-500" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" /></svg>
-                        <span data-lang-key="formTitle">Perencana Kampanye 7 Hari</span>
-                    </h2>
+                <div id="campaignPlanner" class="card-gradient p-6 rounded-2xl shadow-lg mb-8">
+                    <h2 class="text-xl font-semibold mb-5" data-lang-key="formTitle">Perencana Kampanye 7 Hari</h2>
                     <div class="space-y-5">
                          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div>
                                 <label for="campaignGoal" class="block text-sm font-medium text-gray-700 mb-1.5" data-lang-key="campaignGoalLabel">Tujuan Kampanye</label>
-                                <select id="campaignGoal" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white"></select>
+                                <select id="campaignGoal" class="w-full p-3 border border-gray-300 rounded-lg"></select>
                             </div>
                             <div>
                                 <label for="toneOfVoice" class="block text-sm font-medium text-gray-700 mb-1.5" data-lang-key="toneLabel">Gaya Bahasa</label>
-                                <select id="toneOfVoice" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white"></select>
+                                <select id="toneOfVoice" class="w-full p-3 border border-gray-300 rounded-lg"></select>
                             </div>
                         </div>
                         <div>
                             <label for="productName" class="block text-sm font-medium text-gray-700 mb-1.5" data-lang-key="productNameLabel">Nama Produk</label>
-                            <input type="text" id="productName" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" data-lang-key-placeholder="productNamePlaceholder">
+                            <input type="text" id="productName" class="w-full p-3 border border-gray-300 rounded-lg" data-lang-key-placeholder="productNamePlaceholder">
                         </div>
                     </div>
-                    <div class="mt-8 flex flex-col sm:flex-row gap-4">
-                        <button id="generateBtn" class="w-full bg-indigo-600 text-white font-bold py-3.5 px-8 rounded-lg hover:bg-indigo-700 transition-all transform hover:scale-[1.02] focus:outline-none focus:ring-4 focus:ring-indigo-300 shadow-lg flex items-center justify-center gap-2 glow">
-                            <span data-lang-key="generateBtn">Buat Kalender Konten 7 Hari</span>
-                        </button>
+                    <div class="mt-8">
+                        <button id="generateBtn" class="w-full bg-indigo-600 text-white font-bold py-3.5 px-8 rounded-lg hover:bg-indigo-700"><span data-lang-key="generateBtn">Buat Kalender Konten 7 Hari</span></button>
                     </div>
                 </div>
-                <div id="loading" class="hidden mb-8">
-                    <div class="bg-white rounded-2xl p-6 shadow-lg">
-                        <div class="flex flex-col items-center justify-center py-8">
-                            <div class="bouncing-loader"><div></div><div></div><div></div></div>
-                            <h3 class="text-lg font-semibold text-gray-800 mb-3" data-lang-key="generatingTitle">Merancang Kampanye Anda...</h3>
-                        </div>
-                    </div>
-                </div>
+                <div id="loading" class="hidden text-center p-8"><div class="bouncing-loader"><div></div><div></div><div></div></div></div>
                 <div id="output" class="hidden"></div>
             </div>
 
-            <div id="crafter-content" class="tab-content hidden"></div>
-            <div id="analyzer-content" class="tab-content hidden"></div>
+            <!-- Content Crafter Tab -->
+            <div id="crafter-content" class="tab-content hidden">
+                <div id="contentCrafter" class="card-gradient p-6 rounded-2xl shadow-lg mb-8">
+                    <h2 class="text-xl font-semibold mb-5" data-lang-key="crafterTitle">Perajin Konten Utas</h2>
+                    <div class="space-y-5">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label for="crafterTopic" class="block text-sm font-medium text-gray-700 mb-1.5" data-lang-key="crafterTopicLabel">Topik / Nama Produk</label>
+                                <input type="text" id="crafterTopic" class="w-full p-3 border border-gray-300 rounded-lg" data-lang-key-placeholder="crafterTopicPlaceholder">
+                            </div>
+                            <div>
+                                <label for="crafterAudience" class="block text-sm font-medium text-gray-700 mb-1.5" data-lang-key="crafterAudienceLabel">Target Audiens</label>
+                                <input type="text" id="crafterAudience" class="w-full p-3 border border-gray-300 rounded-lg" data-lang-key-placeholder="crafterAudiencePlaceholder">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-8">
+                        <button id="craftBtn" class="w-full bg-green-600 text-white font-bold py-3.5 px-8 rounded-lg hover:bg-green-700"><span data-lang-key="craftBtn">Buatkan Draf Konten</span></button>
+                    </div>
+                </div>
+                <div id="crafterLoading" class="hidden text-center p-8"><div class="bouncing-loader"><div></div><div></div><div></div></div></div>
+                <div id="crafterOutput" class="hidden"></div>
+            </div>
+
+            <!-- Viral Analyzer Tab -->
+            <div id="analyzer-content" class="tab-content hidden">
+                 <div class="card-gradient p-6 rounded-2xl shadow-lg mb-8">
+                    <h2 class="text-xl font-semibold mb-5" data-lang-key="viralAnalyzerTitle">Analisis Konten Viral</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5" data-lang-key="viralUploadLabel">1. Unggah Screenshot</label>
+                            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                                <div class="space-y-1 text-center">
+                                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                                    <div class="flex text-sm text-gray-600">
+                                        <label for="imageUpload" class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500">
+                                            <span data-lang-key="viralUploadAction">Pilih file</span>
+                                            <input id="imageUpload" name="imageUpload" type="file" class="sr-only" accept="image/*">
+                                        </label>
+                                        <p class="pl-1" data-lang-key="viralDragDrop">atau tarik dan lepas</p>
+                                    </div>
+                                </div>
+                            </div>
+                             <div id="imagePreviewContainer" class="hidden mt-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Pratinjau</label>
+                                <div id="imagePreview" class="w-full h-40 bg-gray-100 rounded-md border"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5" data-lang-key="viralMetricsLabel">2. Masukkan Metrik (Opsional)</label>
+                            <input type="text" id="viralNotes" class="w-full p-2 border border-gray-300 rounded-lg" data-lang-key-placeholder="viralNotesPlaceholder">
+                        </div>
+                    </div>
+                    <div class="mt-6">
+                        <button id="analyzeBtn" class="w-full bg-purple-600 text-white font-bold py-3.5 px-8 rounded-lg hover:bg-purple-700"><span data-lang-key="analyzeBtn">Analisis Mengapa Ini Viral</span></button>
+                    </div>
+                </div>
+                <div id="viralLoading" class="hidden text-center p-8"><div class="bouncing-loader"><div></div><div></div><div></div></div></div>
+                <div id="viralOutput" class="hidden"></div>
+            </div>
+            
+            <!-- Dashboard Content -->
             <div id="dashboard-content" class="tab-content hidden">
                 <div class="bg-white rounded-2xl shadow-lg p-8 text-center">
                     <h2 class="text-xl font-bold mb-4">Dashboard Performa Facebook</h2>
-                    <p class="text-gray-600">Hubungkan akun Facebook Anda untuk melihat analitik performa halaman Anda di sini.</p>
+                    <p class="text-gray-600">Fitur ini sedang dalam pengembangan. Data analitik dari Halaman Facebook Anda akan ditampilkan di sini.</p>
                 </div>
             </div>
         </main>
@@ -191,11 +188,11 @@
         <div class="mt-8 pt-6 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
             <p class="text-sm text-gray-500">© 2025 Pacu Konten by tarendrastudio</p>
             <div class="flex gap-3 flex-wrap justify-center">
-                <button id="fbLoginBtn" class="bg-blue-600 border border-blue-600 text-white text-sm py-2 px-3 rounded-lg hover:bg-blue-700 transition-all flex items-center gap-2">
+                <button id="fbLoginBtn" class="bg-blue-600 border border-blue-600 text-white text-sm py-2 px-3 rounded-lg hover:bg-blue-700 flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/></svg>
                     <span data-lang-key="fbLoginBtn">Hubungkan Facebook</span>
                 </button>
-                <button id="apiKeyBtn" class="bg-white border border-gray-300 text-gray-700 text-sm py-2 px-3 rounded-lg hover:bg-gray-100 transition-all flex items-center gap-1">
+                <button id="apiKeyBtn" class="bg-white border border-gray-300 text-gray-700 text-sm py-2 px-3 rounded-lg hover:bg-gray-100 flex items-center gap-1">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd" /></svg>
                     <span data-lang-key="apiKeyBtn">Pengaturan API Key</span>
                 </button>
@@ -208,26 +205,23 @@
         <!-- Modals -->
         <div id="apiKeyModal" class="modal-overlay hidden">
              <div class="modal-content">
-                <h3 class="text-lg font-bold mb-4 flex items-center gap-2" data-lang-key="apiKeyModalTitle">Pengaturan API Key</h3>
-                <p class="text-sm text-gray-600 mb-4" data-lang-key="apiKeyModalDesc">Masukkan API Key Google AI Studio Anda. Kunci ini akan disimpan di peramban Anda.</p>
-                <input type="password" id="apiKeyInput" class="w-full p-3 border border-gray-300 rounded-lg mb-4 focus:ring-2 focus:ring-indigo-500" data-lang-key-placeholder="apiKeyModalPlaceholder">
-                <div class="flex justify-end gap-3">
-                    <button id="closeApiKeyModalBtn" class="bg-gray-200 text-gray-800 font-semibold py-2.5 px-5 rounded-lg hover:bg-gray-300 transition" data-lang-key="cancelBtn">Batal</button>
-                    <button id="saveApiKeyBtn" class="bg-indigo-600 text-white font-semibold py-2.5 px-5 rounded-lg hover:bg-indigo-700 transition" data-lang-key="saveBtn">Simpan</button>
+                <h3 class="text-lg font-bold mb-4" data-lang-key="apiKeyModalTitle">Pengaturan API Key</h3>
+                <p class="text-sm text-gray-600 mb-4" data-lang-key="apiKeyModalDesc">Masukkan API Key Google AI Studio Anda.</p>
+                <input type="password" id="apiKeyInput" class="w-full p-3 border border-gray-300 rounded-lg" data-lang-key-placeholder="apiKeyModalPlaceholder">
+                <div class="flex justify-end gap-3 mt-4">
+                    <button id="closeApiKeyModalBtn" class="bg-gray-200 text-gray-800 font-semibold py-2.5 px-5 rounded-lg" data-lang-key="cancelBtn">Batal</button>
+                    <button id="saveApiKeyBtn" class="bg-indigo-600 text-white font-semibold py-2.5 px-5 rounded-lg" data-lang-key="saveBtn">Simpan</button>
                 </div>
             </div>
         </div>
         <div id="fbPagesModal" class="modal-overlay hidden">
             <div class="modal-content">
                 <h3 class="text-lg font-bold mb-4" data-lang-key="fbPagesModalTitle">Pilih Halaman Facebook</h3>
-                <p class="text-sm text-gray-600 mb-4" data-lang-key="fbPagesModalDesc">Pilih halaman yang ingin Anda kelola dengan Pacu Konten.</p>
-                <div id="fbPagesList" class="space-y-2 max-h-60 overflow-y-auto border p-3 rounded-lg">
-                    <!-- Facebook Pages will be dynamically inserted here -->
-                    <p class="text-gray-500">Memuat halaman...</p>
-                </div>
+                <p class="text-sm text-gray-600 mb-4" data-lang-key="fbPagesModalDesc">Pilih halaman yang ingin Anda kelola.</p>
+                <div id="fbPagesList" class="space-y-2 max-h-60 overflow-y-auto border p-3 rounded-lg"></div>
                 <div class="flex justify-end gap-3 mt-6">
-                    <button id="closeFbPagesModalBtn" class="bg-gray-200 text-gray-800 font-semibold py-2.5 px-5 rounded-lg hover:bg-gray-300 transition" data-lang-key="cancelBtn">Batal</button>
-                    <button id="saveFbPagesBtn" class="bg-blue-600 text-white font-semibold py-2.5 px-5 rounded-lg hover:bg-blue-700 transition" data-lang-key="saveBtn">Simpan Pilihan</button>
+                    <button id="closeFbPagesModalBtn" class="bg-gray-200 text-gray-800 font-semibold py-2.5 px-5 rounded-lg" data-lang-key="cancelBtn">Batal</button>
+                    <button id="saveFbPagesBtn" class="bg-blue-600 text-white font-semibold py-2.5 px-5 rounded-lg" data-lang-key="saveBtn">Simpan Pilihan</button>
                 </div>
             </div>
         </div>
@@ -235,62 +229,17 @@
     </div>
 
     <script>
-        // --- I18n & Language Management (Full Object) ---
+        // --- I18n & Language Management ---
         const translations = {
             id: {
-                mainTitle: "Pacu Konten",
-                subtitle: "Suite Kreatif Berbasis AI untuk Konten Anda",
-                tabPlanner: "Perencana Kampanye",
-                tabCrafter: "Perajin Konten",
-                tabAnalyzer: "Analisis Viral",
-                tabDashboard: "Dashboard",
-                statCampaigns: "Kampanye Dibuat",
-                statFeedback: "Umpan Balik Positif",
-                statContent: "Konten Terbantu",
-                formTitle: "Perencana Kampanye 7 Hari",
-                campaignGoalLabel: "Tujuan Kampanye",
-                goalOption1: "Promosi Umum & Penjualan",
-                goalOption2: "Peluncuran Produk Baru",
-                goalOption3: "Meningkatkan Otoritas Merek",
-                goalOption4: "Membangun Komunitas",
-                toneLabel: "Gaya Bahasa",
-                toneOption1: "Profesional & Informatif",
-                toneOption2: "Santai & Ramah",
-                toneOption3: "Lucu & Menghibur",
-                productNameLabel: "Nama Produk",
-                productNamePlaceholder: "Contoh: Headphone 'Senyap Pro'",
-                generateBtn: "Buat Kalender Konten 7 Hari",
-                generateBtnLoading: "Merancang Strategi...",
-                apiKeyBtn: "Pengaturan API Key",
-                generatingTitle: "Merancang Kampanye Anda...",
-                apiKeyModalTitle: "Pengaturan API Key",
-                apiKeyModalDesc: "Masukkan API Key Google AI Studio Anda. Kunci ini akan disimpan di peramban Anda dan tidak akan dibagikan.",
-                apiKeyModalPlaceholder: "Masukkan API Key Anda di sini",
-                cancelBtn: "Batal",
-                saveBtn: "Simpan",
-                toastAPIKeySaved: "API Key berhasil disimpan!",
-                toastAPIKeyMissing: "API Key belum diatur. Silakan masukkan di Pengaturan.",
-                toastInputMissing: "Harap isi semua kolom untuk hasil terbaik.",
-                errorTitle: "Oops, terjadi kesalahan!",
-                errorDesc: "Tidak dapat menghasilkan konten. Pastikan API Key Anda valid dan coba lagi. Galat: {error}",
-                outputTitle: "Kalender Kampanye Anda",
-                fbLoginBtn: "Hubungkan Facebook",
-                fbLogoutBtn: "Putuskan Facebook",
-                fbPagesModalTitle: "Pilih Halaman Facebook",
-                fbPagesModalDesc: "Pilih halaman yang ingin Anda kelola dengan Pacu Konten.",
-                toastFBLoginSuccess: "Berhasil terhubung dengan Facebook!",
-                toastFBLoginFail: "Gagal terhubung dengan Facebook.",
-                toastFBNoPages: "Tidak ada Halaman Facebook yang ditemukan.",
-                // NEW: More specific error message for permissions
-                toastFBPermissionError: "Izin untuk melihat halaman ditolak. Silakan coba lagi dan setujui izin yang diminta.",
+                mainTitle: "Pacu Konten", subtitle: "Suite Kreatif Berbasis AI untuk Konten Anda", tabPlanner: "Perencana Kampanye", tabCrafter: "Perajin Konten", tabAnalyzer: "Analisis Viral", tabDashboard: "Dashboard", statCampaigns: "Kampanye Dibuat", statFeedback: "Umpan Balik Positif", statContent: "Konten Terbantu", formTitle: "Perencana Kampanye 7 Hari", campaignGoalLabel: "Tujuan Kampanye", goalOption1: "Promosi Umum & Penjualan", goalOption2: "Peluncuran Produk Baru", toneLabel: "Gaya Bahasa", toneOption1: "Profesional & Informatif", toneOption2: "Santai & Ramah", productNameLabel: "Nama Produk", productNamePlaceholder: "Contoh: Headphone 'Senyap Pro'", generateBtn: "Buat Kalender Konten 7 Hari", apiKeyBtn: "Pengaturan API Key", generatingTitle: "Merancang Kampanye Anda...", apiKeyModalTitle: "Pengaturan API Key", apiKeyModalDesc: "Masukkan API Key Google AI Studio Anda.", apiKeyModalPlaceholder: "Masukkan API Key Anda di sini", cancelBtn: "Batal", saveBtn: "Simpan", toastAPIKeySaved: "API Key berhasil disimpan!", toastAPIKeyMissing: "API Key belum diatur.", toastInputMissing: "Harap isi semua kolom.", errorTitle: "Oops, terjadi kesalahan!", errorDesc: "Tidak dapat menghasilkan konten. Galat: {error}", outputTitle: "Kalender Kampanye Anda", fbLoginBtn: "Hubungkan Facebook", fbLogoutBtn: "Putuskan Facebook", fbPagesModalTitle: "Pilih Halaman Facebook", fbPagesModalDesc: "Pilih halaman yang ingin Anda kelola.", toastFBLoginSuccess: "Berhasil terhubung dengan Facebook!", toastFBLoginFail: "Gagal terhubung dengan Facebook.", toastFBNoPages: "Tidak ada Halaman Facebook yang ditemukan.", toastFBPermissionError: "Izin untuk melihat halaman ditolak. Silakan coba lagi dan setujui izin yang diminta.", crafterTitle: "Perajin Konten Utas", crafterTopicLabel: "Topik / Nama Produk", crafterTopicPlaceholder: "Contoh: Tips produktif", crafterAudienceLabel: "Target Audiens", crafterAudiencePlaceholder: "Contoh: Pekerja remote", craftBtn: "Buatkan Draf Konten", viralAnalyzerTitle: "Analisis Konten Viral", viralUploadLabel: "1. Unggah Screenshot", viralUploadAction: "Pilih file", viralDragDrop: "atau tarik dan lepas", viralMetricsLabel: "2. Masukkan Metrik (Opsional)", viralNotesPlaceholder: "Observasi visual...", analyzeBtn: "Analisis Mengapa Ini Viral",
             },
-            en: {
-                // English translations would go here
-            }
+            en: { /* English translations */ }
         };
 
         let currentLanguage = 'id';
-        
+        let uploadedImageBase64 = null;
+
         function setLanguage(lang) {
             currentLanguage = lang;
             document.querySelectorAll('[data-lang-key]').forEach(el => {
@@ -301,12 +250,13 @@
                 const key = el.getAttribute('data-lang-key-placeholder');
                 if (translations[lang][key]) el.placeholder = translations[lang][key];
             });
-            populateSelect('campaignGoal', ['goalOption1', 'goalOption2', 'goalOption3', 'goalOption4']);
-            populateSelect('toneOfVoice', ['toneOption1', 'toneOption2', 'toneOption3']);
+            populateSelect('campaignGoal', ['goalOption1', 'goalOption2']);
+            populateSelect('toneOfVoice', ['toneOption1', 'toneOption2']);
         }
 
         function populateSelect(elementId, translationKeys) {
             const select = document.getElementById(elementId);
+            if (!select) return;
             const t = translations[currentLanguage];
             select.innerHTML = '';
             translationKeys.forEach(key => {
@@ -317,7 +267,7 @@
             });
         }
 
-        // --- DOM Elements (Full Object) ---
+        // --- DOM Elements ---
         const DOMElements = {
             generateBtn: document.getElementById('generateBtn'),
             loadingDiv: document.getElementById('loading'),
@@ -326,9 +276,6 @@
             productNameInput: document.getElementById('productName'),
             toneOfVoiceSelect: document.getElementById('toneOfVoice'),
             toast: document.getElementById('toast'),
-            campaignCountEl: document.getElementById('campaignCount'),
-            positiveFeedbackEl: document.getElementById('positiveFeedback'),
-            contentHelpedEl: document.getElementById('contentHelped'),
             apiKeyBtn: document.getElementById('apiKeyBtn'),
             apiKeyModal: document.getElementById('apiKeyModal'),
             closeApiKeyModalBtn: document.getElementById('closeApiKeyModalBtn'),
@@ -342,10 +289,20 @@
             dashboardTab: document.getElementById('dashboardTab'),
             mainTabs: document.querySelectorAll('.main-tab'),
             tabContents: document.querySelectorAll('.tab-content'),
+            // Crafter Elements
+            craftBtn: document.getElementById('craftBtn'),
+            crafterLoading: document.getElementById('crafterLoading'),
+            crafterOutput: document.getElementById('crafterOutput'),
+            // Analyzer Elements
+            analyzeBtn: document.getElementById('analyzeBtn'),
+            imageUpload: document.getElementById('imageUpload'),
+            imagePreviewContainer: document.getElementById('imagePreviewContainer'),
+            imagePreview: document.getElementById('imagePreview'),
+            viralLoading: document.getElementById('viralLoading'),
+            viralOutput: document.getElementById('viralOutput'),
         };
 
-        // --- Core Application Logic (Original Functions) ---
-        
+        // --- Core Application Logic ---
         function showToast(message) { 
             DOMElements.toast.textContent = message; 
             DOMElements.toast.classList.remove('opacity-0', 'translate-y-20'); 
@@ -367,38 +324,16 @@
             return true;
         }
 
-        async function handleGenerateClick() {
-            if (!checkApiKey()) return;
-            
-            const campaignGoal = DOMElements.campaignGoalInput.value;
-            const productName = DOMElements.productNameInput.value.trim();
-            const toneOfVoice = DOMElements.toneOfVoiceSelect.value;
-
-            if (!productName) {
-                showToast(translations[currentLanguage].toastInputMissing);
-                return;
-            }
-            
-            setLoadingState(true);
-            try {
-                const prompt = `Buatkan rencana konten 7 hari untuk produk "${productName}" dengan tujuan "${campaignGoal}" dan gaya bahasa "${toneOfVoice}". Berikan dalam format JSON dengan struktur: { "weekly_plan": { "senin": { "topic": "...", "caption": "..." } } }`;
-                const result = await apiCall(prompt);
-                renderAllContent(result);
-            } catch (error) {
-                handleError(error, DOMElements.outputDiv);
-            } finally {
-                setLoadingState(false);
-            }
-        }
-
-        async function apiCall(prompt) {
+        async function apiCall(prompt, imageBase64 = null) {
             const apiKey = localStorage.getItem('geminiApiKey') || "";
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent?key=${apiKey}`;
             
-            const payload = { 
-                contents: [{ parts: [{ text: prompt }] }],
-                generationConfig: { responseMimeType: "application/json" }
-            };
+            let parts = [{ text: prompt }];
+            if (imageBase64) {
+                parts.push({ inline_data: { mime_type: 'image/jpeg', data: imageBase64.split(',')[1] } });
+            }
+
+            const payload = { contents: [{ parts }] };
 
             const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
             if (!response.ok) { 
@@ -407,45 +342,120 @@
             }
             const result = await response.json();
             if (result.candidates?.[0]?.content?.parts?.[0]?.text) {
-                return JSON.parse(result.candidates[0].content.parts[0].text);
+                // Try to parse as JSON, if it fails, return as text
+                try {
+                    return JSON.parse(result.candidates[0].content.parts[0].text.replace(/```json/g, '').replace(/```/g, ''));
+                } catch (e) {
+                    return { text: result.candidates[0].content.parts[0].text };
+                }
             } else {
                 throw new Error("Invalid or empty response structure from AI.");
             }
         }
 
-        function renderAllContent(data) {
-            const plan = data.weekly_plan;
-            if (!plan) {
-                DOMElements.outputDiv.innerHTML = `<p>Format respons tidak sesuai.</p>`;
-                return;
-            }
-            let html = `<h2 class="text-2xl font-bold mb-4">${translations[currentLanguage].outputTitle}</h2>`;
-            html += Object.keys(plan).map(day => `
-                <div class="bg-white p-4 rounded-lg shadow mb-4">
-                    <h3 class="font-bold capitalize">${day}</h3>
-                    <p><strong>Topik:</strong> ${plan[day].topic}</p>
-                    <p><strong>Caption:</strong> ${plan[day].caption}</p>
-                </div>
-            `).join('');
-            DOMElements.outputDiv.innerHTML = html;
-        }
-
         function handleError(error, outputElement) {
             console.error("Error:", error);
             const errorMsg = translations[currentLanguage].errorDesc.replace('{error}', error.message);
-            outputElement.innerHTML = `<div class="text-center p-8 bg-red-50 rounded-xl border border-red-200"><h3 class="font-bold text-lg text-red-700">${translations[currentLanguage].errorTitle}</h3><p class="text-red-600">${errorMsg}</p></div>`;
-            outputElement.classList.remove('hidden');
+            if (outputElement) {
+                outputElement.innerHTML = `<div class="text-center p-8 bg-red-50 rounded-xl"><h3 class="font-bold text-lg text-red-700">${translations[currentLanguage].errorTitle}</h3><p class="text-red-600">${errorMsg}</p></div>`;
+                outputElement.classList.remove('hidden');
+            }
+        }
+        
+        // --- Planner Functions ---
+        async function handleGenerateClick() {
+            if (!checkApiKey()) return;
+            const productName = DOMElements.productNameInput.value.trim();
+            if (!productName) {
+                showToast(translations[currentLanguage].toastInputMissing);
+                return;
+            }
+            setLoadingState('loading', true);
+            try {
+                const prompt = `Buatkan rencana konten 7 hari untuk produk "${productName}". Berikan dalam format JSON: { "weekly_plan": { "senin": { "topic": "...", "caption": "..." } } }`;
+                const result = await apiCall(prompt);
+                renderPlannerOutput(result);
+            } catch (error) {
+                handleError(error, DOMElements.outputDiv);
+            } finally {
+                setLoadingState('loading', false);
+            }
+        }
+        
+        function renderPlannerOutput(data) {
+            const plan = data.weekly_plan;
+            if (!plan) {
+                DOMElements.outputDiv.innerHTML = `<p>Format respons tidak sesuai.</p>`; return;
+            }
+            let html = `<h2 class="text-2xl font-bold mb-4">${translations[currentLanguage].outputTitle}</h2>`;
+            html += Object.keys(plan).map(day => `<div class="bg-white p-4 rounded-lg shadow mb-4"><h3 class="font-bold capitalize">${day}</h3><p><strong>Topik:</strong> ${plan[day].topic}</p><p><strong>Caption:</strong> ${plan[day].caption}</p></div>`).join('');
+            DOMElements.outputDiv.innerHTML = html;
         }
 
-        function setLoadingState(isLoading) {
-            DOMElements.generateBtn.disabled = isLoading;
-            if (isLoading) {
-                DOMElements.outputDiv.classList.add('hidden');
-                DOMElements.loadingDiv.classList.remove('hidden');
-            } else {
-                DOMElements.loadingDiv.classList.add('hidden');
-                DOMElements.outputDiv.classList.remove('hidden');
+        // --- Crafter Functions ---
+        async function handleContentCraftClick() {
+            if (!checkApiKey()) return;
+            const topic = document.getElementById('crafterTopic').value.trim();
+            if (!topic) {
+                showToast(translations[currentLanguage].toastInputMissing);
+                return;
             }
+            setLoadingState('crafterLoading', true);
+            try {
+                const prompt = `Buatkan draf konten utas (thread) untuk topik: "${topic}".`;
+                const result = await apiCall(prompt);
+                renderCrafterOutput(result);
+            } catch (error) {
+                handleError(error, DOMElements.crafterOutput);
+            } finally {
+                setLoadingState('crafterLoading', false);
+            }
+        }
+
+        function renderCrafterOutput(data) {
+            DOMElements.crafterOutput.innerHTML = `<div class="bg-white p-4 rounded-lg shadow"><p>${data.text.replace(/\n/g, '<br>')}</p></div>`;
+        }
+
+        // --- Analyzer Functions ---
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                uploadedImageBase64 = e.target.result;
+                DOMElements.imagePreview.style.backgroundImage = `url('${uploadedImageBase64}')`;
+                DOMElements.imagePreviewContainer.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function handleViralAnalysisClick() {
+            if (!checkApiKey() || !uploadedImageBase64) {
+                showToast(translations[currentLanguage].toastInputMissing);
+                return;
+            }
+            setLoadingState('viralLoading', true);
+            try {
+                const notes = document.getElementById('viralNotes').value.trim();
+                const prompt = `Analisis gambar konten viral ini. Catatan tambahan: ${notes}. Berikan analisisnya.`;
+                const result = await apiCall(prompt, uploadedImageBase64);
+                renderViralOutput(result);
+            } catch (error) {
+                handleError(error, DOMElements.viralOutput);
+            } finally {
+                setLoadingState('viralLoading', false);
+            }
+        }
+
+        function renderViralOutput(data) {
+            DOMElements.viralOutput.innerHTML = `<div class="bg-white p-4 rounded-lg shadow"><p>${data.text.replace(/\n/g, '<br>')}</p></div>`;
+        }
+
+        function setLoadingState(loaderId, isLoading) {
+            const loader = document.getElementById(loaderId);
+            const output = document.getElementById(loaderId.replace('Loading', 'Output'));
+            if (loader) loader.classList.toggle('hidden', !isLoading);
+            if (output) output.classList.toggle('hidden', isLoading);
         }
 
         function saveApiKey() { 
@@ -457,30 +467,17 @@
         function switchMainTab(tabId) {
             DOMElements.mainTabs.forEach(tab => tab.classList.remove('active'));
             DOMElements.tabContents.forEach(content => content.classList.add('hidden'));
-            
             const activeTab = document.querySelector(`.main-tab[data-tab="${tabId}"]`);
             const activeContent = document.getElementById(`${tabId}-content`);
-
             if(activeTab) activeTab.classList.add('active');
             if(activeContent) activeContent.classList.remove('hidden');
         }
 
         // --- Facebook Integration Functions ---
         function handleFacebookLogin(isRerequest = false) {
-            if (typeof FB === 'undefined') {
-                showToast("Facebook SDK belum siap. Coba lagi sesaat.");
-                return;
-            }
-            
-            const loginOptions = {
-                scope: 'public_profile,email,pages_show_list,pages_read_engagement,pages_manage_posts'
-            };
-
-            // If it's a re-request, ask Facebook to show the permission dialog again.
-            if (isRerequest) {
-                loginOptions.auth_type = 'rerequest';
-            }
-
+            if (typeof FB === 'undefined') { showToast("Facebook SDK belum siap."); return; }
+            const loginOptions = { scope: 'public_profile,email,pages_show_list,pages_read_engagement,pages_manage_posts' };
+            if (isRerequest) { loginOptions.auth_type = 'rerequest'; }
             FB.login(function(response) {
                 if (response.authResponse) {
                     showToast(translations[currentLanguage].toastFBLoginSuccess);
@@ -491,45 +488,28 @@
             }, loginOptions);
         }
 
-        // UPDATED: fetchFacebookPages with better error handling
         function fetchFacebookPages() {
             toggleModal(DOMElements.fbPagesModal, true);
             DOMElements.fbPagesList.innerHTML = '<div class="bouncing-loader"><div></div><div></div><div></div></div>';
-
             FB.api('/me/accounts', function(response) {
                 if (response && !response.error) {
                     if (response.data && response.data.length > 0) {
-                        let pagesHTML = response.data.map(page => `
-                            <label class="flex items-center p-2 rounded-md hover:bg-gray-100 cursor-pointer">
-                                <input type="checkbox" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" value="${page.id}" data-token="${page.access_token}" data-name="${page.name}">
-                                <span class="ml-3 text-sm font-medium text-gray-800">${page.name}</span>
-                            </label>
-                        `).join('');
+                        let pagesHTML = response.data.map(page => `<label class="flex items-center p-2 rounded-md hover:bg-gray-100 cursor-pointer"><input type="checkbox" class="h-4 w-4 text-blue-600" value="${page.id}" data-token="${page.access_token}" data-name="${page.name}"><span class="ml-3 text-sm">${page.name}</span></label>`).join('');
                         DOMElements.fbPagesList.innerHTML = pagesHTML;
                     } else {
-                        DOMElements.fbPagesList.innerHTML = `<p class="text-gray-500 text-center">${translations[currentLanguage].toastFBNoPages}</p>`;
+                        DOMElements.fbPagesList.innerHTML = `<p class="text-center">${translations[currentLanguage].toastFBNoPages}</p>`;
                     }
                 } else {
                     console.error('Error fetching pages:', response.error);
-                    // Display a more helpful error message and a button to re-request permissions
-                    DOMElements.fbPagesList.innerHTML = `
-                        <div class="text-center">
-                            <p class="text-red-600 font-semibold">${translations[currentLanguage].toastFBPermissionError}</p>
-                            <button onclick="handleFacebookLogin(true)" class="mt-4 bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700">Coba Lagi</button>
-                        </div>
-                    `;
+                    DOMElements.fbPagesList.innerHTML = `<div class="text-center"><p class="text-red-600 font-semibold">${translations[currentLanguage].toastFBPermissionError}</p><button onclick="handleFacebookLogin(true)" class="mt-4 bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">Coba Lagi</button></div>`;
                 }
             });
         }
         
         function saveSelectedPages() {
             const selectedPages = [];
-            document.querySelectorAll('#fbPagesList input[type="checkbox"]:checked').forEach(checkbox => {
-                selectedPages.push({
-                    id: checkbox.value,
-                    name: checkbox.getAttribute('data-name'),
-                    accessToken: checkbox.getAttribute('data-token')
-                });
+            document.querySelectorAll('#fbPagesList input:checked').forEach(checkbox => {
+                selectedPages.push({ id: checkbox.value, name: checkbox.getAttribute('data-name'), accessToken: checkbox.getAttribute('data-token') });
             });
             if (selectedPages.length > 0) {
                 localStorage.setItem('managedFBPages', JSON.stringify(selectedPages));
@@ -553,14 +533,17 @@
 
         // --- Main Initialization ---
         function setupEventListeners() {
-            DOMElements.generateBtn.addEventListener('click', handleGenerateClick);
-            DOMElements.apiKeyBtn.addEventListener('click', () => toggleModal(DOMElements.apiKeyModal, true));
-            DOMElements.closeApiKeyModalBtn.addEventListener('click', () => toggleModal(DOMElements.apiKeyModal, false));
-            DOMElements.saveApiKeyBtn.addEventListener('click', saveApiKey);
-            DOMElements.fbLoginBtn.addEventListener('click', () => handleFacebookLogin(false)); // Initial login is not a rerequest
-            DOMElements.closeFbPagesModalBtn.addEventListener('click', () => toggleModal(DOMElements.fbPagesModal, false));
-            DOMElements.saveFbPagesBtn.addEventListener('click', saveSelectedPages);
-            DOMElements.mainTabs.forEach(tab => tab.addEventListener('click', () => switchMainTab(tab.dataset.tab)));
+            if(DOMElements.generateBtn) DOMElements.generateBtn.addEventListener('click', handleGenerateClick);
+            if(DOMElements.apiKeyBtn) DOMElements.apiKeyBtn.addEventListener('click', () => toggleModal(DOMElements.apiKeyModal, true));
+            if(DOMElements.closeApiKeyModalBtn) DOMElements.closeApiKeyModalBtn.addEventListener('click', () => toggleModal(DOMElements.apiKeyModal, false));
+            if(DOMElements.saveApiKeyBtn) DOMElements.saveApiKeyBtn.addEventListener('click', saveApiKey);
+            if(DOMElements.fbLoginBtn) DOMElements.fbLoginBtn.addEventListener('click', () => handleFacebookLogin(false));
+            if(DOMElements.closeFbPagesModalBtn) DOMElements.closeFbPagesModalBtn.addEventListener('click', () => toggleModal(DOMElements.fbPagesModal, false));
+            if(DOMElements.saveFbPagesBtn) DOMElements.saveFbPagesBtn.addEventListener('click', saveSelectedPages);
+            if(DOMElements.mainTabs) DOMElements.mainTabs.forEach(tab => tab.addEventListener('click', () => switchMainTab(tab.dataset.tab)));
+            if(DOMElements.craftBtn) DOMElements.craftBtn.addEventListener('click', handleContentCraftClick);
+            if(DOMElements.analyzeBtn) DOMElements.analyzeBtn.addEventListener('click', handleViralAnalysisClick);
+            if(DOMElements.imageUpload) DOMElements.imageUpload.addEventListener('change', handleImageUpload);
         }
 
         document.addEventListener('DOMContentLoaded', () => {
