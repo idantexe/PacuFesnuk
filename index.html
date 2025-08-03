@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pacu Konten - Integrasi Facebook</title>
+    <title>Pacu Konten - Versi Stabil</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; background: #f3f4f6; min-height: 100vh; }
         .card-gradient { background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%); }
@@ -53,10 +52,6 @@
                     <h1 class="text-3xl md:text-4xl font-bold" data-lang-key="mainTitle">Pacu Konten</h1>
                     <p class="mt-2 text-base md:text-lg text-indigo-100" data-lang-key="subtitle">Suite Kreatif Berbasis AI untuk Konten Anda</p>
                 </div>
-                <div class="flex bg-white bg-opacity-20 backdrop-blur-sm rounded-lg p-1">
-                    <button id="lang-id" class="lang-btn px-4 py-1.5 text-sm font-semibold rounded-md transition-colors duration-300">ID</button>
-                    <button id="lang-en" class="lang-btn px-4 py-1.5 text-sm font-semibold rounded-md transition-colors duration-300">EN</button>
-                </div>
             </div>
         </header>
 
@@ -74,40 +69,16 @@
         <main>
             <!-- Campaign Planner Tab -->
             <div id="planner-content" class="tab-content">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                    <div class="bg-white p-4 rounded-xl shadow-md flex items-center">
-                        <div class="bg-indigo-100 p-3 rounded-lg mr-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg></div>
-                        <div><p class="text-gray-500 text-sm" data-lang-key="statCampaigns">Kampanye Dibuat</p><p class="text-2xl font-bold" id="campaignCount">0</p></div>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl shadow-md flex items-center">
-                        <div class="bg-green-100 p-3 rounded-lg mr-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905a3.61 3.61 0 01-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" /></svg></div>
-                        <div><p class="text-gray-500 text-sm" data-lang-key="statFeedback">Umpan Balik Positif</p><p class="text-2xl font-bold" id="positiveFeedback">0%</p></div>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl shadow-md flex items-center">
-                        <div class="bg-blue-100 p-3 rounded-lg mr-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg></div>
-                        <div><p class="text-gray-500 text-sm" data-lang-key="statContent">Konten Terbantu</p><p class="text-2xl font-bold" id="contentHelped">0</p></div>
-                    </div>
-                </div>
                 <div id="campaignPlanner" class="card-gradient p-6 rounded-2xl shadow-lg mb-8">
                     <h2 class="text-xl font-semibold mb-5" data-lang-key="formTitle">Perencana Kampanye 7 Hari</h2>
                     <div class="space-y-5">
-                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            <div>
-                                <label for="campaignGoal" class="block text-sm font-medium text-gray-700 mb-1.5" data-lang-key="campaignGoalLabel">Tujuan Kampanye</label>
-                                <select id="campaignGoal" class="w-full p-3 border border-gray-300 rounded-lg"></select>
-                            </div>
-                            <div>
-                                <label for="toneOfVoice" class="block text-sm font-medium text-gray-700 mb-1.5" data-lang-key="toneLabel">Gaya Bahasa</label>
-                                <select id="toneOfVoice" class="w-full p-3 border border-gray-300 rounded-lg"></select>
-                            </div>
-                        </div>
-                        <div>
-                            <label for="productName" class="block text-sm font-medium text-gray-700 mb-1.5" data-lang-key="productNameLabel">Nama Produk</label>
-                            <input type="text" id="productName" class="w-full p-3 border border-gray-300 rounded-lg" data-lang-key-placeholder="productNamePlaceholder">
+                         <div>
+                            <label for="productName" class="block text-sm font-medium text-gray-700 mb-1.5" data-lang-key="productNameLabel">Nama Produk / Topik Utama</label>
+                            <input type="text" id="productName" class="w-full p-3 border border-gray-300 rounded-lg" placeholder="Contoh: Kopi Cold Brew 'Tenang'">
                         </div>
                     </div>
                     <div class="mt-8">
-                        <button id="generateBtn" class="w-full bg-indigo-600 text-white font-bold py-3.5 px-8 rounded-lg hover:bg-indigo-700"><span data-lang-key="generateBtn">Buat Kalender Konten 7 Hari</span></button>
+                        <button id="generateBtn" class="w-full bg-indigo-600 text-white font-bold py-3.5 px-8 rounded-lg hover:bg-indigo-700"><span data-lang-key="generateBtn">Buat Rencana Konten</span></button>
                     </div>
                 </div>
                 <div id="loading" class="hidden text-center p-8"><div class="bouncing-loader"><div></div><div></div><div></div></div></div>
@@ -117,17 +88,11 @@
             <!-- Content Crafter Tab -->
             <div id="crafter-content" class="tab-content hidden">
                 <div id="contentCrafter" class="card-gradient p-6 rounded-2xl shadow-lg mb-8">
-                    <h2 class="text-xl font-semibold mb-5" data-lang-key="crafterTitle">Perajin Konten Utas</h2>
+                    <h2 class="text-xl font-semibold mb-5" data-lang-key="crafterTitle">Perajin Konten</h2>
                     <div class="space-y-5">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            <div>
-                                <label for="crafterTopic" class="block text-sm font-medium text-gray-700 mb-1.5" data-lang-key="crafterTopicLabel">Topik / Nama Produk</label>
-                                <input type="text" id="crafterTopic" class="w-full p-3 border border-gray-300 rounded-lg" data-lang-key-placeholder="crafterTopicPlaceholder">
-                            </div>
-                            <div>
-                                <label for="crafterAudience" class="block text-sm font-medium text-gray-700 mb-1.5" data-lang-key="crafterAudienceLabel">Target Audiens</label>
-                                <input type="text" id="crafterAudience" class="w-full p-3 border border-gray-300 rounded-lg" data-lang-key-placeholder="crafterAudiencePlaceholder">
-                            </div>
+                        <div>
+                            <label for="crafterTopic" class="block text-sm font-medium text-gray-700 mb-1.5" data-lang-key="crafterTopicLabel">Topik Konten</label>
+                            <input type="text" id="crafterTopic" class="w-full p-3 border border-gray-300 rounded-lg" placeholder="Contoh: 3 cara menikmati kopi di pagi hari">
                         </div>
                     </div>
                     <div class="mt-8">
@@ -148,27 +113,23 @@
                             <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
                                 <div class="space-y-1 text-center">
                                     <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
-                                    <div class="flex text-sm text-gray-600">
-                                        <label for="imageUpload" class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500">
-                                            <span data-lang-key="viralUploadAction">Pilih file</span>
-                                            <input id="imageUpload" name="imageUpload" type="file" class="sr-only" accept="image/*">
-                                        </label>
-                                        <p class="pl-1" data-lang-key="viralDragDrop">atau tarik dan lepas</p>
-                                    </div>
+                                    <label for="imageUpload" class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500">
+                                        <span data-lang-key="viralUploadAction">Pilih file</span>
+                                        <input id="imageUpload" name="imageUpload" type="file" class="sr-only" accept="image/*">
+                                    </label>
                                 </div>
                             </div>
                              <div id="imagePreviewContainer" class="hidden mt-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Pratinjau</label>
                                 <div id="imagePreview" class="w-full h-40 bg-gray-100 rounded-md border"></div>
                             </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1.5" data-lang-key="viralMetricsLabel">2. Masukkan Metrik (Opsional)</label>
-                            <input type="text" id="viralNotes" class="w-full p-2 border border-gray-300 rounded-lg" data-lang-key-placeholder="viralNotesPlaceholder">
+                            <label for="analyzePrompt" class="block text-sm font-medium text-gray-700 mb-1.5">2. Apa yang ingin Anda analisis?</label>
+                            <textarea id="analyzePrompt" rows="4" class="w-full p-2 border border-gray-300 rounded-lg" placeholder="Contoh: Analisis hook dan CTA dari konten ini."></textarea>
                         </div>
                     </div>
                     <div class="mt-6">
-                        <button id="analyzeBtn" class="w-full bg-purple-600 text-white font-bold py-3.5 px-8 rounded-lg hover:bg-purple-700"><span data-lang-key="analyzeBtn">Analisis Mengapa Ini Viral</span></button>
+                        <button id="analyzeBtn" class="w-full bg-purple-600 text-white font-bold py-3.5 px-8 rounded-lg hover:bg-purple-700"><span data-lang-key="analyzeBtn">Analisis Gambar</span></button>
                     </div>
                 </div>
                 <div id="viralLoading" class="hidden text-center p-8"><div class="bouncing-loader"><div></div><div></div><div></div></div></div>
@@ -179,16 +140,16 @@
             <div id="dashboard-content" class="tab-content hidden">
                 <div class="bg-white rounded-2xl shadow-lg p-8 text-center">
                     <h2 class="text-xl font-bold mb-4">Dashboard Performa Facebook</h2>
-                    <p class="text-gray-600">Fitur ini sedang dalam pengembangan. Data analitik dari Halaman Facebook Anda akan ditampilkan di sini.</p>
+                    <p class="text-gray-600">Fitur ini sedang dalam pengembangan.</p>
                 </div>
             </div>
         </main>
         
         <!-- Global Buttons -->
         <div class="mt-8 pt-6 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <p class="text-sm text-gray-500">© 2025 Pacu Konten by tarendrastudio</p>
+            <p class="text-sm text-gray-500">© 2025 Pacu Konten</p>
             <div class="flex gap-3 flex-wrap justify-center">
-                <button id="fbLoginBtn" class="bg-blue-600 border border-blue-600 text-white text-sm py-2 px-3 rounded-lg hover:bg-blue-700 flex items-center gap-2">
+                <button id="fbLoginBtn" class="bg-blue-600 text-white text-sm py-2 px-3 rounded-lg hover:bg-blue-700 flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/></svg>
                     <span data-lang-key="fbLoginBtn">Hubungkan Facebook</span>
                 </button>
@@ -206,75 +167,34 @@
         <div id="apiKeyModal" class="modal-overlay hidden">
              <div class="modal-content">
                 <h3 class="text-lg font-bold mb-4" data-lang-key="apiKeyModalTitle">Pengaturan API Key</h3>
-                <p class="text-sm text-gray-600 mb-4" data-lang-key="apiKeyModalDesc">Masukkan API Key Google AI Studio Anda.</p>
-                <input type="password" id="apiKeyInput" class="w-full p-3 border border-gray-300 rounded-lg" data-lang-key-placeholder="apiKeyModalPlaceholder">
+                <input type="password" id="apiKeyInput" class="w-full p-3 border border-gray-300 rounded-lg" placeholder="Masukkan API Key Google AI Anda">
                 <div class="flex justify-end gap-3 mt-4">
-                    <button id="closeApiKeyModalBtn" class="bg-gray-200 text-gray-800 font-semibold py-2.5 px-5 rounded-lg" data-lang-key="cancelBtn">Batal</button>
-                    <button id="saveApiKeyBtn" class="bg-indigo-600 text-white font-semibold py-2.5 px-5 rounded-lg" data-lang-key="saveBtn">Simpan</button>
+                    <button id="closeApiKeyModalBtn" class="bg-gray-200 text-gray-800 font-semibold py-2.5 px-5 rounded-lg">Batal</button>
+                    <button id="saveApiKeyBtn" class="bg-indigo-600 text-white font-semibold py-2.5 px-5 rounded-lg">Simpan</button>
                 </div>
             </div>
         </div>
         <div id="fbPagesModal" class="modal-overlay hidden">
             <div class="modal-content">
                 <h3 class="text-lg font-bold mb-4" data-lang-key="fbPagesModalTitle">Pilih Halaman Facebook</h3>
-                <p class="text-sm text-gray-600 mb-4" data-lang-key="fbPagesModalDesc">Pilih halaman yang ingin Anda kelola.</p>
                 <div id="fbPagesList" class="space-y-2 max-h-60 overflow-y-auto border p-3 rounded-lg"></div>
                 <div class="flex justify-end gap-3 mt-6">
-                    <button id="closeFbPagesModalBtn" class="bg-gray-200 text-gray-800 font-semibold py-2.5 px-5 rounded-lg" data-lang-key="cancelBtn">Batal</button>
-                    <button id="saveFbPagesBtn" class="bg-blue-600 text-white font-semibold py-2.5 px-5 rounded-lg" data-lang-key="saveBtn">Simpan Pilihan</button>
+                    <button id="closeFbPagesModalBtn" class="bg-gray-200 text-gray-800 font-semibold py-2.5 px-5 rounded-lg">Batal</button>
+                    <button id="saveFbPagesBtn" class="bg-blue-600 text-white font-semibold py-2.5 px-5 rounded-lg">Simpan Pilihan</button>
                 </div>
             </div>
         </div>
-
     </div>
 
     <script>
-        // --- I18n & Language Management ---
-        const translations = {
-            id: {
-                mainTitle: "Pacu Konten", subtitle: "Suite Kreatif Berbasis AI untuk Konten Anda", tabPlanner: "Perencana Kampanye", tabCrafter: "Perajin Konten", tabAnalyzer: "Analisis Viral", tabDashboard: "Dashboard", statCampaigns: "Kampanye Dibuat", statFeedback: "Umpan Balik Positif", statContent: "Konten Terbantu", formTitle: "Perencana Kampanye 7 Hari", campaignGoalLabel: "Tujuan Kampanye", goalOption1: "Promosi Umum & Penjualan", goalOption2: "Peluncuran Produk Baru", toneLabel: "Gaya Bahasa", toneOption1: "Profesional & Informatif", toneOption2: "Santai & Ramah", productNameLabel: "Nama Produk", productNamePlaceholder: "Contoh: Headphone 'Senyap Pro'", generateBtn: "Buat Kalender Konten 7 Hari", apiKeyBtn: "Pengaturan API Key", generatingTitle: "Merancang Kampanye Anda...", apiKeyModalTitle: "Pengaturan API Key", apiKeyModalDesc: "Masukkan API Key Google AI Studio Anda.", apiKeyModalPlaceholder: "Masukkan API Key Anda di sini", cancelBtn: "Batal", saveBtn: "Simpan", toastAPIKeySaved: "API Key berhasil disimpan!", toastAPIKeyMissing: "API Key belum diatur.", toastInputMissing: "Harap isi semua kolom.", errorTitle: "Oops, terjadi kesalahan!", errorDesc: "Tidak dapat menghasilkan konten. Galat: {error}", outputTitle: "Kalender Kampanye Anda", fbLoginBtn: "Hubungkan Facebook", fbLogoutBtn: "Putuskan Facebook", fbPagesModalTitle: "Pilih Halaman Facebook", fbPagesModalDesc: "Pilih halaman yang ingin Anda kelola.", toastFBLoginSuccess: "Berhasil terhubung dengan Facebook!", toastFBLoginFail: "Gagal terhubung dengan Facebook.", toastFBNoPages: "Tidak ada Halaman Facebook yang ditemukan.", toastFBPermissionError: "Izin untuk melihat halaman ditolak. Silakan coba lagi dan setujui izin yang diminta.", crafterTitle: "Perajin Konten Utas", crafterTopicLabel: "Topik / Nama Produk", crafterTopicPlaceholder: "Contoh: Tips produktif", crafterAudienceLabel: "Target Audiens", crafterAudiencePlaceholder: "Contoh: Pekerja remote", craftBtn: "Buatkan Draf Konten", viralAnalyzerTitle: "Analisis Konten Viral", viralUploadLabel: "1. Unggah Screenshot", viralUploadAction: "Pilih file", viralDragDrop: "atau tarik dan lepas", viralMetricsLabel: "2. Masukkan Metrik (Opsional)", viralNotesPlaceholder: "Observasi visual...", analyzeBtn: "Analisis Mengapa Ini Viral",
-            },
-            en: { /* English translations */ }
-        };
-
-        let currentLanguage = 'id';
         let uploadedImageBase64 = null;
-
-        function setLanguage(lang) {
-            currentLanguage = lang;
-            document.querySelectorAll('[data-lang-key]').forEach(el => {
-                const key = el.getAttribute('data-lang-key');
-                if (translations[lang][key]) el.textContent = translations[lang][key];
-            });
-            document.querySelectorAll('[data-lang-key-placeholder]').forEach(el => {
-                const key = el.getAttribute('data-lang-key-placeholder');
-                if (translations[lang][key]) el.placeholder = translations[lang][key];
-            });
-            populateSelect('campaignGoal', ['goalOption1', 'goalOption2']);
-            populateSelect('toneOfVoice', ['toneOption1', 'toneOption2']);
-        }
-
-        function populateSelect(elementId, translationKeys) {
-            const select = document.getElementById(elementId);
-            if (!select) return;
-            const t = translations[currentLanguage];
-            select.innerHTML = '';
-            translationKeys.forEach(key => {
-                const option = document.createElement('option');
-                option.value = t[key];
-                option.textContent = t[key];
-                select.appendChild(option);
-            });
-        }
 
         // --- DOM Elements ---
         const DOMElements = {
             generateBtn: document.getElementById('generateBtn'),
             loadingDiv: document.getElementById('loading'),
             outputDiv: document.getElementById('output'),
-            campaignGoalInput: document.getElementById('campaignGoal'),
             productNameInput: document.getElementById('productName'),
-            toneOfVoiceSelect: document.getElementById('toneOfVoice'),
             toast: document.getElementById('toast'),
             apiKeyBtn: document.getElementById('apiKeyBtn'),
             apiKeyModal: document.getElementById('apiKeyModal'),
@@ -289,15 +209,15 @@
             dashboardTab: document.getElementById('dashboardTab'),
             mainTabs: document.querySelectorAll('.main-tab'),
             tabContents: document.querySelectorAll('.tab-content'),
-            // Crafter Elements
             craftBtn: document.getElementById('craftBtn'),
             crafterLoading: document.getElementById('crafterLoading'),
             crafterOutput: document.getElementById('crafterOutput'),
-            // Analyzer Elements
+            crafterTopicInput: document.getElementById('crafterTopic'),
             analyzeBtn: document.getElementById('analyzeBtn'),
             imageUpload: document.getElementById('imageUpload'),
             imagePreviewContainer: document.getElementById('imagePreviewContainer'),
             imagePreview: document.getElementById('imagePreview'),
+            analyzePromptInput: document.getElementById('analyzePrompt'),
             viralLoading: document.getElementById('viralLoading'),
             viralOutput: document.getElementById('viralOutput'),
         };
@@ -310,14 +230,13 @@
         }
 
         function toggleModal(modal, show) { 
-            if (show) modal.classList.remove('hidden'); 
-            else modal.classList.add('hidden'); 
+            if (modal) modal.classList.toggle('hidden', !show);
         }
 
         function checkApiKey() {
             const apiKey = localStorage.getItem('geminiApiKey');
             if (!apiKey) {
-                showToast(translations[currentLanguage].toastAPIKeyMissing);
+                showToast("API Key Google AI belum diatur.");
                 toggleModal(DOMElements.apiKeyModal, true);
                 return false;
             }
@@ -326,60 +245,72 @@
 
         async function apiCall(prompt, imageBase64 = null) {
             const apiKey = localStorage.getItem('geminiApiKey') || "";
-            // UPDATED: Use a newer, more reliable multimodal model
-            const modelName = 'gemini-1.5-flash-latest';
+            // UPDATED: Changed model to gemini-2.5-flash-preview-05-20 as requested
+            const modelName = 'gemini-2.5-flash-preview-05-20';
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
             
             let parts = [{ text: prompt }];
             if (imageBase64) {
-                // UPDATED: Corrected the payload key from 'inline_data' to 'inlineData'
                 parts.push({ inlineData: { mime_type: 'image/jpeg', data: imageBase64.split(',')[1] } });
             }
 
-            const payload = { contents: [{ parts }] };
+            const generationConfig = imageBase64 ? {} : { responseMimeType: "application/json" };
+
+            const payload = { contents: [{ parts }], generationConfig };
 
             const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            
             if (!response.ok) { 
-                const errorBody = await response.text(); 
-                throw new Error(`API request failed: ${errorBody}`); 
+                const errorBody = await response.json(); 
+                throw new Error(errorBody.error.message); 
             }
+            
             const result = await response.json();
+
             if (result.candidates?.[0]?.content?.parts?.[0]?.text) {
-                // UPDATED: More robust JSON parsing and error handling
+                const textResponse = result.candidates[0].content.parts[0].text;
+                if (imageBase64) {
+                    return { text: textResponse };
+                }
                 try {
-                    const cleanedText = result.candidates[0].content.parts[0].text.replace(/^```json\s*|```\s*$/g, '');
-                    return JSON.parse(cleanedText);
+                    return JSON.parse(textResponse.replace(/^```json\s*|```\s*$/g, ''));
                 } catch (e) {
-                    return { text: result.candidates[0].content.parts[0].text };
+                    console.error("JSON parsing failed, returning as text:", textResponse);
+                    return { text: "Gagal memproses respons dari AI. Coba lagi." };
                 }
             } else {
-                if (result.error) {
-                    throw new Error(`API Error: ${result.error.message}`);
-                }
-                throw new Error("Invalid or empty response structure from AI.");
+                throw new Error("Respons dari AI tidak valid atau kosong.");
             }
         }
 
         function handleError(error, outputElement) {
             console.error("Error:", error);
-            const errorMsg = translations[currentLanguage].errorDesc.replace('{error}', error.message);
+            const errorMsg = `Tidak dapat menghasilkan konten. Galat: ${error.message}`;
             if (outputElement) {
-                outputElement.innerHTML = `<div class="text-center p-8 bg-red-50 rounded-xl"><h3 class="font-bold text-lg text-red-700">${translations[currentLanguage].errorTitle}</h3><p class="text-red-600">${errorMsg}</p></div>`;
+                outputElement.innerHTML = `<div class="text-center p-8 bg-red-50 rounded-xl"><h3 class="font-bold text-lg text-red-700">Oops, terjadi kesalahan!</h3><p class="text-red-600">${errorMsg}</p></div>`;
                 outputElement.classList.remove('hidden');
             }
         }
         
-        // --- Planner Functions ---
+        function setLoadingState(loaderId, isLoading) {
+            const loader = document.getElementById(loaderId);
+            const output = document.getElementById(loaderId.replace('Loading', 'Output'));
+            if (loader) loader.classList.toggle('hidden', !isLoading);
+            if (output) {
+                output.classList.toggle('hidden', isLoading);
+                if(isLoading) output.innerHTML = ''; // Clear previous output
+            }
+        }
+
+        // --- Feature Handlers ---
         async function handleGenerateClick() {
             if (!checkApiKey()) return;
-            const productName = DOMElements.productNameInput.value.trim();
-            if (!productName) {
-                showToast(translations[currentLanguage].toastInputMissing);
-                return;
-            }
+            const topic = DOMElements.productNameInput.value.trim();
+            if (!topic) { showToast("Harap isi nama produk/topik."); return; }
+            
             setLoadingState('loading', true);
             try {
-                const prompt = `Buatkan rencana konten 7 hari untuk produk "${productName}". Berikan dalam format JSON: { "weekly_plan": { "senin": { "topic": "...", "caption": "..." } } }`;
+                const prompt = `Buatkan rencana konten 7 hari sederhana untuk topik "${topic}". Berikan dalam format JSON dengan struktur: { "rencana": { "senin": "...", "selasa": "...", dst } }`;
                 const result = await apiCall(prompt);
                 renderPlannerOutput(result);
             } catch (error) {
@@ -390,26 +321,21 @@
         }
         
         function renderPlannerOutput(data) {
-            const plan = data.weekly_plan;
-            if (!plan) {
-                DOMElements.outputDiv.innerHTML = `<p>Format respons tidak sesuai.</p>`; return;
-            }
-            let html = `<h2 class="text-2xl font-bold mb-4">${translations[currentLanguage].outputTitle}</h2>`;
-            html += Object.keys(plan).map(day => `<div class="bg-white p-4 rounded-lg shadow mb-4"><h3 class="font-bold capitalize">${day}</h3><p><strong>Topik:</strong> ${plan[day].topic}</p><p><strong>Caption:</strong> ${plan[day].caption}</p></div>`).join('');
+            const plan = data.rencana;
+            if (!plan) { DOMElements.outputDiv.innerHTML = `<p>Format respons tidak sesuai.</p>`; return; }
+            let html = `<h2 class="text-2xl font-bold mb-4">Rencana Konten Anda</h2>`;
+            html += Object.keys(plan).map(day => `<div class="bg-white p-4 rounded-lg shadow mb-4"><h3 class="font-bold capitalize">${day}</h3><p>${plan[day]}</p></div>`).join('');
             DOMElements.outputDiv.innerHTML = html;
         }
 
-        // --- Crafter Functions ---
         async function handleContentCraftClick() {
             if (!checkApiKey()) return;
-            const topic = document.getElementById('crafterTopic').value.trim();
-            if (!topic) {
-                showToast(translations[currentLanguage].toastInputMissing);
-                return;
-            }
+            const topic = DOMElements.crafterTopicInput.value.trim();
+            if (!topic) { showToast("Harap isi topik konten."); return; }
+
             setLoadingState('crafterLoading', true);
             try {
-                const prompt = `Buatkan draf konten utas (thread) untuk topik: "${topic}".`;
+                const prompt = `Buatkan draf konten/artikel singkat untuk topik: "${topic}".`;
                 const result = await apiCall(prompt);
                 renderCrafterOutput(result);
             } catch (error) {
@@ -420,10 +346,9 @@
         }
 
         function renderCrafterOutput(data) {
-            DOMElements.crafterOutput.innerHTML = `<div class="bg-white p-4 rounded-lg shadow"><p>${data.text.replace(/\n/g, '<br>')}</p></div>`;
+            DOMElements.crafterOutput.innerHTML = `<div class="bg-white p-4 rounded-lg shadow whitespace-pre-wrap">${data.text || JSON.stringify(data)}</div>`;
         }
 
-        // --- Analyzer Functions ---
         function handleImageUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -437,14 +362,12 @@
         }
 
         async function handleViralAnalysisClick() {
-            if (!checkApiKey() || !uploadedImageBase64) {
-                showToast(translations[currentLanguage].toastInputMissing);
-                return;
-            }
+            if (!checkApiKey() || !uploadedImageBase64) { showToast("Harap unggah gambar."); return; }
+            const prompt = DOMElements.analyzePromptInput.value.trim();
+            if (!prompt) { showToast("Harap isi apa yang ingin dianalisis."); return; }
+
             setLoadingState('viralLoading', true);
             try {
-                const notes = document.getElementById('viralNotes').value.trim();
-                const prompt = `Analisis gambar konten viral ini. Catatan tambahan: ${notes}. Berikan analisisnya.`;
                 const result = await apiCall(prompt, uploadedImageBase64);
                 renderViralOutput(result);
             } catch (error) {
@@ -455,20 +378,14 @@
         }
 
         function renderViralOutput(data) {
-            DOMElements.viralOutput.innerHTML = `<div class="bg-white p-4 rounded-lg shadow"><p>${data.text.replace(/\n/g, '<br>')}</p></div>`;
+            DOMElements.viralOutput.innerHTML = `<div class="bg-white p-4 rounded-lg shadow whitespace-pre-wrap">${data.text}</div>`;
         }
 
-        function setLoadingState(loaderId, isLoading) {
-            const loader = document.getElementById(loaderId);
-            const output = document.getElementById(loaderId.replace('Loading', 'Output'));
-            if (loader) loader.classList.toggle('hidden', !isLoading);
-            if (output) output.classList.toggle('hidden', isLoading);
-        }
-
+        // --- UI & General Functions ---
         function saveApiKey() { 
             localStorage.setItem('geminiApiKey', DOMElements.apiKeyInput.value); 
             toggleModal(DOMElements.apiKeyModal, false); 
-            showToast(translations[currentLanguage].toastAPIKeySaved); 
+            showToast("API Key berhasil disimpan!"); 
         }
 
         function switchMainTab(tabId) {
@@ -487,10 +404,10 @@
             if (isRerequest) { loginOptions.auth_type = 'rerequest'; }
             FB.login(function(response) {
                 if (response.authResponse) {
-                    showToast(translations[currentLanguage].toastFBLoginSuccess);
+                    showToast("Berhasil terhubung dengan Facebook!");
                     fetchFacebookPages();
                 } else {
-                    showToast(translations[currentLanguage].toastFBLoginFail);
+                    showToast("Gagal terhubung dengan Facebook.");
                 }
             }, loginOptions);
         }
@@ -504,11 +421,11 @@
                         let pagesHTML = response.data.map(page => `<label class="flex items-center p-2 rounded-md hover:bg-gray-100 cursor-pointer"><input type="checkbox" class="h-4 w-4 text-blue-600" value="${page.id}" data-token="${page.access_token}" data-name="${page.name}"><span class="ml-3 text-sm">${page.name}</span></label>`).join('');
                         DOMElements.fbPagesList.innerHTML = pagesHTML;
                     } else {
-                        DOMElements.fbPagesList.innerHTML = `<p class="text-center">${translations[currentLanguage].toastFBNoPages}</p>`;
+                        DOMElements.fbPagesList.innerHTML = `<p class="text-center">Tidak ada Halaman Facebook yang ditemukan.</p>`;
                     }
                 } else {
                     console.error('Error fetching pages:', response.error);
-                    DOMElements.fbPagesList.innerHTML = `<div class="text-center"><p class="text-red-600 font-semibold">${translations[currentLanguage].toastFBPermissionError}</p><button onclick="handleFacebookLogin(true)" class="mt-4 bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">Coba Lagi</button></div>`;
+                    DOMElements.fbPagesList.innerHTML = `<div class="text-center"><p class="text-red-600 font-semibold">Izin untuk melihat halaman ditolak.</p><button onclick="handleFacebookLogin(true)" class="mt-4 bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">Coba Lagi</button></div>`;
                 }
             });
         }
@@ -534,7 +451,6 @@
                 DOMElements.fbLoginBtn.innerHTML = `<span>Terhubung (${pages.length} Hal.)</span>`;
                 DOMElements.fbLoginBtn.classList.replace('bg-blue-600', 'bg-green-600');
                 DOMElements.dashboardTab.classList.remove('text-gray-400', 'cursor-not-allowed');
-                DOMElements.dashboardTab.title = "Lihat Dashboard Performa";
             }
         }
 
@@ -554,7 +470,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            setLanguage('id');
             setupEventListeners();
             updateUIAfterLogin();
             DOMElements.apiKeyInput.value = localStorage.getItem('geminiApiKey') || '';
