@@ -148,50 +148,58 @@
                 <div id="viralOutput" class="hidden"></div>
             </div>
             
-            <!-- Dashboard Content - FIXED -->
+            <!-- Dashboard Content - ENHANCED -->
             <div id="dashboard-content" class="tab-content hidden">
                  <div id="dashboardLoading" class="hidden text-center p-8"><div class="bouncing-loader"><div></div><div></div><div></div></div></div>
                  <div id="dashboard-error" class="hidden text-center p-8 bg-red-50 rounded-xl"></div>
                 <div id="dashboardData" class="hidden">
                     <!-- Stat Cards -->
                     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
-                        <!-- Follower Count -->
                         <div class="bg-white p-4 rounded-xl shadow-md flex items-center">
                             <div class="bg-blue-100 p-3 rounded-lg mr-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg></div>
                             <div><p class="text-gray-500 text-sm">Followers</p><p class="text-2xl font-bold" id="followerCount">0</p></div>
                         </div>
-                        <!-- Page Likes -->
                         <div class="bg-white p-4 rounded-xl shadow-md flex items-center">
                            <div class="bg-red-100 p-3 rounded-lg mr-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg></div>
                             <div><p class="text-gray-500 text-sm">Fan Page Likes</p><p class="text-2xl font-bold" id="likeCount">0</p></div>
                         </div>
-                        <!-- Engagement -->
                          <div class="bg-white p-4 rounded-xl shadow-md flex items-center">
                            <div class="bg-yellow-100 p-3 rounded-lg mr-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg></div>
                             <div><p class="text-gray-500 text-sm">Total Interaksi</p><p class="text-2xl font-bold" id="totalEngagement">0</p></div>
                         </div>
-                        <!-- Reach -->
                         <div class="bg-white p-4 rounded-xl shadow-md flex items-center">
                            <div class="bg-green-100 p-3 rounded-lg mr-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg></div>
                             <div><p class="text-gray-500 text-sm">Jangkauan (28hr)</p><p class="text-2xl font-bold" id="reachCount">0</p></div>
                         </div>
                     </div>
-                    <!-- Popular Post -->
+                    <!-- All Posts Section -->
                     <div class="bg-white rounded-xl shadow-md p-6">
-                        <h3 class="text-lg font-semibold mb-4">Postingan Terpopuler (Berdasarkan Interaksi)</h3>
-                        <div id="popularPost" class="space-y-4"></div>
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold">Daftar Postingan</h3>
+                            <select id="postFilter" class="p-2 border border-gray-300 rounded-lg text-sm">
+                                <option value="terbaru">Terbaru</option>
+                                <option value="populer">Terpopuler (Interaksi)</option>
+                                <option value="suka">Suka Terbanyak</option>
+                                <option value="komentar">Komentar Terbanyak</option>
+                            </select>
+                        </div>
+                        <div id="allPosts" class="space-y-4"></div>
                     </div>
                 </div>
             </div>
         </main>
         
-        <!-- Global Buttons - INTEGRATED -->
+        <!-- Global Buttons - ENHANCED -->
         <div class="mt-8 pt-6 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
             <p class="text-sm text-gray-500">© 2025 Pacu Konten</p>
             <div class="flex gap-3 flex-wrap justify-center">
                 <button id="fbLoginBtn" class="bg-blue-600 text-white text-sm py-2 px-3 rounded-lg hover:bg-blue-700 flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/></svg>
                     <span data-lang-key="fbLoginBtn">Hubungkan Facebook</span>
+                </button>
+                 <button id="fbLogoutBtn" class="hidden bg-red-600 text-white text-sm py-2 px-3 rounded-lg hover:bg-red-700 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd" /></svg>
+                    <span data-lang-key="fbLogoutBtn">Putuskan Hubungan</span>
                 </button>
                 <button id="apiKeyBtn" class="bg-white border border-gray-300 text-gray-700 text-sm py-2 px-3 rounded-lg hover:bg-gray-100 flex items-center gap-1">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd" /></svg>
@@ -228,6 +236,7 @@
 
     <script>
         let uploadedImageBase64 = null;
+        let allFetchedPosts = []; // Store all posts for filtering
         
         // --- I18n & Language Management (for demonstration) ---
         const translations = {
@@ -250,6 +259,7 @@
                 viralUploadAction: "Pilih file",
                 analyzeBtn: "Analisis Gambar",
                 fbLoginBtn: "Hubungkan Facebook",
+                fbLogoutBtn: "Putuskan Hubungan",
                 fbLoginBtnConnected: "Terhubung",
                 apiKeyBtn: "Pengaturan API Key",
                 apiKeyModalTitle: "Pengaturan API Key",
@@ -294,6 +304,7 @@
 
             // Facebook Integration elements
             fbLoginBtn: document.getElementById('fbLoginBtn'),
+            fbLogoutBtn: document.getElementById('fbLogoutBtn'),
             fbPagesModal: document.getElementById('fbPagesModal'),
             closeFbPagesModalBtn: document.getElementById('closeFbPagesModalBtn'),
             saveFbPageBtn: document.getElementById('saveFbPageBtn'),
@@ -306,7 +317,8 @@
             likeCount: document.getElementById('likeCount'),
             totalEngagement: document.getElementById('totalEngagement'),
             reachCount: document.getElementById('reachCount'),
-            popularPost: document.getElementById('popularPost'),
+            allPosts: document.getElementById('allPosts'),
+            postFilter: document.getElementById('postFilter'),
         };
 
         // --- Core Application Logic ---
@@ -505,10 +517,9 @@
             }
         }
 
-        // --- Facebook Integration Functions - UPDATED ---
+        // --- Facebook Integration Functions - ENHANCED ---
         function handleFacebookLogin(isRerequest = false) {
             if (typeof FB === 'undefined') { showToast("Facebook SDK belum siap. Coba beberapa saat lagi."); return; }
-            // Added 'read_insights' for more detailed dashboard
             const loginOptions = { scope: 'public_profile,email,pages_show_list,pages_read_engagement,pages_manage_posts,read_insights' };
             if (isRerequest) { loginOptions.auth_type = 'rerequest'; }
             
@@ -520,6 +531,14 @@
                     showToast("Login Facebook dibatalkan atau gagal.");
                 }
             }, loginOptions);
+        }
+
+        function handleFacebookLogout() {
+            FB.logout(function(response) {
+                localStorage.removeItem('managedFBPage');
+                showToast("Berhasil memutuskan hubungan dengan Facebook.");
+                updateUIAfterLogout();
+            });
         }
 
         function fetchFacebookPages() {
@@ -556,8 +575,9 @@
         function updateUIAfterLogin() {
             const page = JSON.parse(localStorage.getItem('managedFBPage'));
             if (page) {
-                DOMElements.fbLoginBtn.innerHTML = `<span>${translations[currentLanguage].fbLoginBtnConnected} (${page.name})</span>`;
-                DOMElements.fbLoginBtn.classList.replace('bg-blue-600', 'bg-green-600');
+                DOMElements.fbLoginBtn.classList.add('hidden');
+                DOMElements.fbLogoutBtn.classList.remove('hidden');
+                DOMElements.fbLogoutBtn.firstElementChild.nextElementSibling.textContent = `${translations[currentLanguage].fbLoginBtnConnected} (${page.name})`;
                 DOMElements.dashboardTab.classList.remove('text-gray-400', 'cursor-not-allowed');
                 
                 if (document.getElementById('crafter-text-content')?.innerText.trim()) {
@@ -566,7 +586,18 @@
             }
         }
 
-        // --- Dashboard & Posting Functions - FIXED ---
+        function updateUIAfterLogout() {
+            DOMElements.fbLoginBtn.classList.remove('hidden');
+            DOMElements.fbLogoutBtn.classList.add('hidden');
+            DOMElements.dashboardTab.classList.add('text-gray-400', 'cursor-not-allowed');
+            DOMElements.crafterActions.classList.add('hidden');
+            // Hide dashboard content if visible
+            document.getElementById('dashboard-content').classList.add('hidden');
+            // Switch to the first tab
+            switchMainTab('planner');
+        }
+
+        // --- Dashboard & Posting Functions - ENHANCED ---
         async function loadDashboardData() {
             const page = JSON.parse(localStorage.getItem('managedFBPage'));
             if (!page) { 
@@ -577,7 +608,6 @@
                 return;
             }
 
-            // 1. Reset state
             DOMElements.dashboardLoading.classList.remove('hidden');
             DOMElements.dashboardData.classList.add('hidden');
             DOMElements.dashboardError.classList.add('hidden');
@@ -594,33 +624,31 @@
 
                 const postsPromise = new Promise((resolve, reject) => {
                     const postFields = 'message,created_time,permalink_url,shares,reactions.summary(true),comments.summary(true)';
-                    FB.api(`/${page.id}/posts?fields=${postFields}&limit=25&access_token=${page.accessToken}`, r => r.error ? reject(r.error) : resolve(r));
+                    FB.api(`/${page.id}/posts?fields=${postFields}&limit=50&access_token=${page.accessToken}`, r => r.error ? reject(r.error) : resolve(r));
                 });
 
                 const [basicInfo, insights, postsData] = await Promise.all([basicInfoPromise, insightsPromise, postsPromise]);
                 
-                // 2. On success, render data and show the data container
-                renderDashboard(basicInfo, insights, postsData);
+                renderDashboardStats(basicInfo, insights);
+                allFetchedPosts = postsData.data || [];
+                renderPosts('terbaru');
+
                 DOMElements.dashboardData.classList.remove('hidden');
 
             } catch (error) {
-                // 3. On error, show the error container
                 console.error("Dashboard Loading Error:", error);
                 DOMElements.dashboardError.innerHTML = `<p class="font-bold text-lg text-red-700">Gagal Memuat Data Dashboard</p><p class="text-red-600">Terjadi kesalahan: ${error.message}. Anda mungkin perlu memberikan izin 'read_insights' saat login.</p>`;
                 DOMElements.dashboardError.classList.remove('hidden');
             } finally {
-                // 4. Always hide the loader at the end
                 DOMElements.dashboardLoading.classList.add('hidden');
             }
         }
 
-        function renderDashboard(basicInfo, insights, postsData) {
-            // Basic Info
+        function renderDashboardStats(basicInfo, insights) {
             const followers = basicInfo.fan_count || 0;
             DOMElements.followerCount.textContent = followers.toLocaleString('id-ID');
-            DOMElements.likeCount.textContent = followers.toLocaleString('id-ID'); // Same as followers
+            DOMElements.likeCount.textContent = followers.toLocaleString('id-ID');
 
-            // Insights
             const engagementData = insights.data.find(m => m.name === 'page_post_engagements')?.values;
             const reachData = insights.data.find(m => m.name === 'page_impressions_unique')?.values;
             
@@ -629,44 +657,48 @@
 
             DOMElements.totalEngagement.textContent = totalEngagement.toLocaleString('id-ID');
             DOMElements.reachCount.textContent = totalReach.toLocaleString('id-ID');
+        }
 
-            // Popular Post
-            if (postsData && postsData.data.length > 0) {
-                let popularPost = null;
-                let maxInteractions = -1;
-
-                postsData.data.forEach(post => {
-                    const reactions = post.reactions?.summary.total_count || 0;
-                    const comments = post.comments?.summary.total_count || 0;
-                    const shares = post.shares?.count || 0;
-                    const totalInteractions = reactions + comments + shares;
-
-                    if (totalInteractions > maxInteractions) {
-                        maxInteractions = totalInteractions;
-                        popularPost = post;
-                    }
-                });
-                renderPopularPost(popularPost);
-            } else {
-                DOMElements.popularPost.innerHTML = '<p>Belum ada postingan untuk dianalisis.</p>';
+        function renderPosts(filterType = 'terbaru') {
+            if (!allFetchedPosts || allFetchedPosts.length === 0) {
+                DOMElements.allPosts.innerHTML = '<p>Belum ada postingan untuk ditampilkan.</p>';
+                return;
             }
+
+            let sortedPosts = [...allFetchedPosts];
+
+            switch (filterType) {
+                case 'populer':
+                    sortedPosts.sort((a, b) => {
+                        const interactionsA = (a.reactions?.summary.total_count || 0) + (a.comments?.summary.total_count || 0) + (a.shares?.count || 0);
+                        const interactionsB = (b.reactions?.summary.total_count || 0) + (b.comments?.summary.total_count || 0) + (b.shares?.count || 0);
+                        return interactionsB - interactionsA;
+                    });
+                    break;
+                case 'suka':
+                    sortedPosts.sort((a, b) => (b.reactions?.summary.total_count || 0) - (a.reactions?.summary.total_count || 0));
+                    break;
+                case 'komentar':
+                     sortedPosts.sort((a, b) => (b.comments?.summary.total_count || 0) - (a.comments?.summary.total_count || 0));
+                    break;
+                case 'terbaru':
+                default:
+                    // Already sorted by newest first from API
+                    break;
+            }
+
+            let html = sortedPosts.map(post => {
+                const message = post.message ? (post.message.length > 200 ? post.message.substring(0, 200) + '...' : post.message) : '<em>(Postingan gambar/video)</em>';
+                const reactions = post.reactions?.summary.total_count || 0;
+                const comments = post.comments?.summary.total_count || 0;
+                const shares = post.shares?.count || 0;
+                const date = new Date(post.created_time).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+                
+                return `<div class="border-t pt-4"><p class="text-gray-600">${message}</p><div class="flex items-center justify-between mt-3 text-sm text-gray-500"><span>${date}</span><div class="flex items-center gap-4 font-medium"><span>❤️ ${reactions.toLocaleString('id-ID')}</span><span>💬 ${comments.toLocaleString('id-ID')}</span><span>🔗 ${shares.toLocaleString('id-ID')}</span><a href="${post.permalink_url}" target="_blank" class="text-blue-600 hover:underline">Lihat</a></div></div></div>`;
+            }).join('');
+            
+            DOMElements.allPosts.innerHTML = html;
         }
-
-
-        function renderPopularPost(post) {
-            if (!post) { DOMElements.popularPost.innerHTML = '<p>Tidak dapat menemukan postingan populer.</p>'; return; }
-            
-            const message = post.message ? (post.message.length > 200 ? post.message.substring(0, 200) + '...' : post.message) : '<em>(Postingan gambar/video)</em>';
-            const reactions = post.reactions ? post.reactions.summary.total_count : 0;
-            const comments = post.comments ? post.comments.summary.total_count : 0;
-            const shares = post.shares ? post.shares.count : 0;
-            const date = new Date(post.created_time).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
-            
-            const html = `<div class="border-t pt-4"><p class="text-gray-600">${message}</p><div class="flex items-center justify-between mt-3 text-sm text-gray-500"><span>${date}</span><div class="flex items-center gap-4 font-medium"><span>❤️ ${reactions.toLocaleString('id-ID')}</span><span>💬 ${comments.toLocaleString('id-ID')}</span><span>🔗 ${shares.toLocaleString('id-ID')}</span><a href="${post.permalink_url}" target="_blank" class="text-blue-600 hover:underline">Lihat Postingan</a></div></div></div>`;
-            
-            DOMElements.popularPost.innerHTML = html;
-        }
-
 
         function handlePostToFacebook() {
             const page = JSON.parse(localStorage.getItem('managedFBPage'));
@@ -718,8 +750,10 @@
 
             // Facebook Listeners
             DOMElements.fbLoginBtn?.addEventListener('click', () => handleFacebookLogin(false));
+            DOMElements.fbLogoutBtn?.addEventListener('click', handleFacebookLogout);
             DOMElements.closeFbPagesModalBtn?.addEventListener('click', () => toggleModal(DOMElements.fbPagesModal, false));
             DOMElements.saveFbPageBtn?.addEventListener('click', saveSelectedPage);
+            DOMElements.postFilter?.addEventListener('change', (e) => renderPosts(e.target.value));
         }
 
         document.addEventListener('DOMContentLoaded', () => {
