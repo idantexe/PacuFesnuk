@@ -138,9 +138,27 @@
             
             <!-- Dashboard Content -->
             <div id="dashboard-content" class="tab-content hidden">
-                <div class="bg-white rounded-2xl shadow-lg p-8 text-center">
-                    <h2 class="text-xl font-bold mb-4">Dashboard Performa Facebook</h2>
-                    <p class="text-gray-600">Fitur ini sedang dalam pengembangan.</p>
+                <!-- NEW: Dashboard HTML Structure -->
+                <div id="dashboardLoading" class="hidden text-center p-8"><div class="bouncing-loader"><div></div><div></div><div></div></div></div>
+                <div id="dashboardData" class="hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                        <div class="bg-white p-4 rounded-xl shadow-md flex items-center">
+                            <div class="bg-blue-100 p-3 rounded-lg mr-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg></div>
+                            <div><p class="text-gray-500 text-sm">Followers</p><p class="text-2xl font-bold" id="followerCount">0</p></div>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow-md flex items-center">
+                            <div class="bg-red-100 p-3 rounded-lg mr-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg></div>
+                            <div><p class="text-gray-500 text-sm">Page Likes</p><p class="text-2xl font-bold" id="likeCount">0</p></div>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow-md flex items-center">
+                            <div class="bg-yellow-100 p-3 rounded-lg mr-4"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2V7a2 2 0 012-2h6l2-2h2l-2 2z" /></svg></div>
+                            <div><p class="text-gray-500 text-sm">Engagement Rate</p><p class="text-2xl font-bold" id="engagementRate">0%</p></div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h3 class="text-lg font-semibold mb-4">Postingan Terakhir</h3>
+                        <div id="recentPosts" class="space-y-4"></div>
+                    </div>
                 </div>
             </div>
         </main>
@@ -220,6 +238,13 @@
             analyzePromptInput: document.getElementById('analyzePrompt'),
             viralLoading: document.getElementById('viralLoading'),
             viralOutput: document.getElementById('viralOutput'),
+            // NEW: Dashboard elements
+            dashboardLoading: document.getElementById('dashboardLoading'),
+            dashboardData: document.getElementById('dashboardData'),
+            followerCount: document.getElementById('followerCount'),
+            likeCount: document.getElementById('likeCount'),
+            engagementRate: document.getElementById('engagementRate'),
+            recentPosts: document.getElementById('recentPosts'),
         };
 
         // --- Core Application Logic ---
@@ -245,8 +270,7 @@
 
         async function apiCall(prompt, imageBase64 = null) {
             const apiKey = localStorage.getItem('geminiApiKey') || "";
-            // UPDATED: Changed model to gemini-2.5-flash-preview-05-20 as requested
-            const modelName = 'gemini-2.5-flash-preview-05-20';
+            const modelName = 'gemini-1.5-flash-latest';
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
             
             let parts = [{ text: prompt }];
@@ -255,9 +279,7 @@
             }
 
             const generationConfig = imageBase64 ? {} : { responseMimeType: "application/json" };
-
             const payload = { contents: [{ parts }], generationConfig };
-
             const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
             
             if (!response.ok) { 
@@ -269,9 +291,7 @@
 
             if (result.candidates?.[0]?.content?.parts?.[0]?.text) {
                 const textResponse = result.candidates[0].content.parts[0].text;
-                if (imageBase64) {
-                    return { text: textResponse };
-                }
+                if (imageBase64) { return { text: textResponse }; }
                 try {
                     return JSON.parse(textResponse.replace(/^```json\s*|```\s*$/g, ''));
                 } catch (e) {
@@ -294,11 +314,11 @@
         
         function setLoadingState(loaderId, isLoading) {
             const loader = document.getElementById(loaderId);
-            const output = document.getElementById(loaderId.replace('Loading', 'Output'));
+            const output = document.getElementById(loaderId.replace('Loading', 'Output').replace('Data',''));
             if (loader) loader.classList.toggle('hidden', !isLoading);
             if (output) {
                 output.classList.toggle('hidden', isLoading);
-                if(isLoading) output.innerHTML = ''; // Clear previous output
+                if(isLoading) output.innerHTML = '';
             }
         }
 
@@ -395,6 +415,11 @@
             const activeContent = document.getElementById(`${tabId}-content`);
             if(activeTab) activeTab.classList.add('active');
             if(activeContent) activeContent.classList.remove('hidden');
+
+            // NEW: Load dashboard data when tab is clicked
+            if (tabId === 'dashboard') {
+                loadDashboardData();
+            }
         }
 
         // --- Facebook Integration Functions ---
@@ -418,7 +443,7 @@
             FB.api('/me/accounts', function(response) {
                 if (response && !response.error) {
                     if (response.data && response.data.length > 0) {
-                        let pagesHTML = response.data.map(page => `<label class="flex items-center p-2 rounded-md hover:bg-gray-100 cursor-pointer"><input type="checkbox" class="h-4 w-4 text-blue-600" value="${page.id}" data-token="${page.access_token}" data-name="${page.name}"><span class="ml-3 text-sm">${page.name}</span></label>`).join('');
+                        let pagesHTML = response.data.map(page => `<label class="flex items-center p-2 rounded-md hover:bg-gray-100 cursor-pointer"><input type="radio" name="fbpage" class="h-4 w-4 text-blue-600" value="${page.id}" data-token="${page.access_token}" data-name="${page.name}"><span class="ml-3 text-sm">${page.name}</span></label>`).join('');
                         DOMElements.fbPagesList.innerHTML = pagesHTML;
                     } else {
                         DOMElements.fbPagesList.innerHTML = `<p class="text-center">Tidak ada Halaman Facebook yang ditemukan.</p>`;
@@ -431,13 +456,15 @@
         }
         
         function saveSelectedPages() {
-            const selectedPages = [];
-            document.querySelectorAll('#fbPagesList input:checked').forEach(checkbox => {
-                selectedPages.push({ id: checkbox.value, name: checkbox.getAttribute('data-name'), accessToken: checkbox.getAttribute('data-token') });
-            });
-            if (selectedPages.length > 0) {
-                localStorage.setItem('managedFBPages', JSON.stringify(selectedPages));
-                showToast(`Berhasil menyimpan ${selectedPages.length} halaman.`);
+            const selectedPage = document.querySelector('#fbPagesList input:checked');
+            if (selectedPage) {
+                const pageData = { 
+                    id: selectedPage.value, 
+                    name: selectedPage.getAttribute('data-name'), 
+                    accessToken: selectedPage.getAttribute('data-token') 
+                };
+                localStorage.setItem('managedFBPage', JSON.stringify(pageData));
+                showToast(`Halaman ${pageData.name} berhasil dipilih.`);
                 toggleModal(DOMElements.fbPagesModal, false);
                 updateUIAfterLogin();
             } else {
@@ -446,13 +473,86 @@
         }
 
         function updateUIAfterLogin() {
-            const pages = JSON.parse(localStorage.getItem('managedFBPages'));
-            if (pages && pages.length > 0) {
-                DOMElements.fbLoginBtn.innerHTML = `<span>Terhubung (${pages.length} Hal.)</span>`;
+            const page = JSON.parse(localStorage.getItem('managedFBPage'));
+            if (page) {
+                DOMElements.fbLoginBtn.innerHTML = `<span>Terhubung (${page.name})</span>`;
                 DOMElements.fbLoginBtn.classList.replace('bg-blue-600', 'bg-green-600');
                 DOMElements.dashboardTab.classList.remove('text-gray-400', 'cursor-not-allowed');
             }
         }
+
+        // --- NEW: Dashboard Functions ---
+        function loadDashboardData() {
+            const page = JSON.parse(localStorage.getItem('managedFBPage'));
+            if (!page) {
+                showToast("Silakan hubungkan dan pilih Halaman Facebook terlebih dahulu.");
+                return;
+            }
+
+            setLoadingState('dashboardLoading', true);
+            DOMElements.dashboardData.classList.add('hidden');
+
+            // Fetch Page Info (Followers, Likes)
+            const pageInfoFields = 'fan_count,overall_star_rating'; // Example fields
+            FB.api(`/${page.id}?fields=${pageInfoFields}&access_token=${page.accessToken}`, function(response) {
+                if (response && !response.error) {
+                    DOMElements.followerCount.textContent = response.fan_count ? response.fan_count.toLocaleString('id-ID') : 'N/A';
+                    DOMElements.likeCount.textContent = response.overall_star_rating ? response.overall_star_rating.rating_count : 'N/A'; // Example, likes is not a direct field
+                } else {
+                    console.error('Error fetching page info:', response.error);
+                }
+            });
+
+            // Fetch Recent Posts and their interactions
+            const postFields = 'message,created_time,permalink_url,likes.summary(true),comments.summary(true),shares';
+            FB.api(`/${page.id}/posts?fields=${postFields}&limit=5&access_token=${page.accessToken}`, function(response) {
+                if (response && !response.error) {
+                    renderRecentPosts(response.data);
+                    // Calculate engagement rate (simple example)
+                    const totalLikes = response.data.reduce((sum, post) => sum + (post.likes ? post.likes.summary.total_count : 0), 0);
+                    const fanCount = parseInt(DOMElements.followerCount.textContent.replace(/\./g, '')) || 1;
+                    const engagement = fanCount > 0 ? ((totalLikes / response.data.length) / fanCount * 100).toFixed(2) : 0;
+                    DOMElements.engagementRate.textContent = `${engagement}%`;
+
+                } else {
+                    console.error('Error fetching posts:', response.error);
+                    DOMElements.recentPosts.innerHTML = '<p class="text-red-500">Gagal memuat postingan.</p>';
+                }
+                setLoadingState('dashboardLoading', false);
+                DOMElements.dashboardData.classList.remove('hidden');
+            });
+        }
+
+        function renderRecentPosts(posts) {
+            if (!posts || posts.length === 0) {
+                DOMElements.recentPosts.innerHTML = '<p class="text-gray-500">Belum ada postingan.</p>';
+                return;
+            }
+            let html = posts.map(post => {
+                const message = post.message ? (post.message.length > 150 ? post.message.substring(0, 150) + '...' : post.message) : '<em>(Postingan ini hanya berisi gambar/video)</em>';
+                const likes = post.likes ? post.likes.summary.total_count : 0;
+                const comments = post.comments ? post.comments.summary.total_count : 0;
+                const shares = post.shares ? post.shares.count : 0;
+                const date = new Date(post.created_time).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+
+                return `
+                    <div class="border-t pt-4">
+                        <p class="text-gray-600 text-sm">${message}</p>
+                        <div class="flex items-center justify-between mt-2 text-sm text-gray-500">
+                            <span>${date}</span>
+                            <div class="flex items-center gap-4">
+                                <span>❤️ ${likes}</span>
+                                <span>💬 ${comments}</span>
+                                <span>🔗 ${shares}</span>
+                                <a href="${post.permalink_url}" target="_blank" class="text-blue-600 hover:underline">Lihat</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            DOMElements.recentPosts.innerHTML = html;
+        }
+
 
         // --- Main Initialization ---
         function setupEventListeners() {
