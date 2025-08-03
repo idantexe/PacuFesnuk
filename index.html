@@ -148,9 +148,9 @@
                 <div id="viralOutput" class="hidden"></div>
             </div>
             
-            <!-- Dashboard Content - UPDATED & ENHANCED -->
+            <!-- Dashboard Content - FIXED -->
             <div id="dashboard-content" class="tab-content hidden">
-                 <div id="dashboardLoading" class="text-center p-8"><div class="bouncing-loader"><div></div><div></div><div></div></div></div>
+                 <div id="dashboardLoading" class="hidden text-center p-8"><div class="bouncing-loader"><div></div><div></div><div></div></div></div>
                  <div id="dashboard-error" class="hidden text-center p-8 bg-red-50 rounded-xl"></div>
                 <div id="dashboardData" class="hidden">
                     <!-- Stat Cards -->
@@ -566,16 +566,20 @@
             }
         }
 
-        // --- Dashboard & Posting Functions - UPDATED & ENHANCED ---
+        // --- Dashboard & Posting Functions - FIXED ---
         async function loadDashboardData() {
             const page = JSON.parse(localStorage.getItem('managedFBPage'));
             if (!page) { 
                 DOMElements.dashboardError.innerHTML = '<p class="text-center text-red-500">Silakan hubungkan akun Facebook dan pilih halaman untuk melihat dashboard.</p>';
                 DOMElements.dashboardError.classList.remove('hidden');
+                DOMElements.dashboardLoading.classList.add('hidden');
+                DOMElements.dashboardData.classList.add('hidden');
                 return;
             }
 
-            setLoadingState(DOMElements.dashboardLoading, DOMElements.dashboardData, true);
+            // 1. Reset state
+            DOMElements.dashboardLoading.classList.remove('hidden');
+            DOMElements.dashboardData.classList.add('hidden');
             DOMElements.dashboardError.classList.add('hidden');
 
             try {
@@ -595,15 +599,18 @@
 
                 const [basicInfo, insights, postsData] = await Promise.all([basicInfoPromise, insightsPromise, postsPromise]);
                 
-                // Process and render data
+                // 2. On success, render data and show the data container
                 renderDashboard(basicInfo, insights, postsData);
+                DOMElements.dashboardData.classList.remove('hidden');
 
             } catch (error) {
+                // 3. On error, show the error container
                 console.error("Dashboard Loading Error:", error);
                 DOMElements.dashboardError.innerHTML = `<p class="font-bold text-lg text-red-700">Gagal Memuat Data Dashboard</p><p class="text-red-600">Terjadi kesalahan: ${error.message}. Anda mungkin perlu memberikan izin 'read_insights' saat login.</p>`;
                 DOMElements.dashboardError.classList.remove('hidden');
             } finally {
-                setLoadingState(DOMElements.dashboardLoading, DOMElements.dashboardData, false);
+                // 4. Always hide the loader at the end
+                DOMElements.dashboardLoading.classList.add('hidden');
             }
         }
 
@@ -643,8 +650,6 @@
             } else {
                 DOMElements.popularPost.innerHTML = '<p>Belum ada postingan untuk dianalisis.</p>';
             }
-            
-            DOMElements.dashboardData.classList.remove('hidden');
         }
 
 
