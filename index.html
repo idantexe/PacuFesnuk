@@ -602,7 +602,7 @@
             switchMainTab('planner');
         }
 
-        // --- Dashboard & Posting Functions - ENHANCED ---
+        // --- Dashboard & Posting Functions - FIXED ---
         async function loadDashboardData() {
             const page = JSON.parse(localStorage.getItem('managedFBPage'));
             if (!page) { 
@@ -619,7 +619,8 @@
 
             try {
                 const basicInfoPromise = new Promise((resolve, reject) => {
-                    FB.api(`/${page.id}?fields=fan_count,name&access_token=${page.accessToken}`, r => r.error ? reject(r.error) : resolve(r));
+                    // **FIX: Request both fan_count and followers_count**
+                    FB.api(`/${page.id}?fields=fan_count,followers_count,name&access_token=${page.accessToken}`, r => r.error ? reject(r.error) : resolve(r));
                 });
 
                 const insightsPromise = new Promise((resolve, reject) => {
@@ -650,9 +651,11 @@
         }
 
         function renderDashboardStats(basicInfo, insights) {
-            const followers = basicInfo.fan_count || 0;
+            // **FIX: Use correct fields for followers and likes**
+            const followers = basicInfo.followers_count || 0;
+            const likes = basicInfo.fan_count || 0;
             DOMElements.followerCount.textContent = followers.toLocaleString('id-ID');
-            DOMElements.likeCount.textContent = followers.toLocaleString('id-ID');
+            DOMElements.likeCount.textContent = likes.toLocaleString('id-ID');
 
             const engagementData = insights.data.find(m => m.name === 'page_post_engagements')?.values;
             const reachData = insights.data.find(m => m.name === 'page_impressions_unique')?.values;
