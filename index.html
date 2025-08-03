@@ -222,6 +222,7 @@
                 <h3 class="text-lg font-bold mb-4" data-lang-key="fbPagesModalTitle">Pilih Halaman Facebook</h3>
                 <p class="text-sm text-gray-600 mb-4" data-lang-key="fbPagesModalDesc">Pilih halaman yang ingin Anda kelola dengan Pacu Konten.</p>
                 <div id="fbPagesList" class="space-y-2 max-h-60 overflow-y-auto border p-3 rounded-lg">
+                    <!-- Facebook Pages will be dynamically inserted here -->
                     <p class="text-gray-500">Memuat halaman...</p>
                 </div>
                 <div class="flex justify-end gap-3 mt-6">
@@ -280,6 +281,8 @@
                 toastFBLoginSuccess: "Berhasil terhubung dengan Facebook!",
                 toastFBLoginFail: "Gagal terhubung dengan Facebook.",
                 toastFBNoPages: "Tidak ada Halaman Facebook yang ditemukan.",
+                // NEW: More specific error message for permissions
+                toastFBPermissionError: "Izin untuk melihat halaman ditolak. Silakan coba lagi dan setujui izin yang diminta.",
             },
             en: {
                 // English translations would go here
@@ -289,8 +292,6 @@
         let currentLanguage = 'id';
         
         function setLanguage(lang) {
-            // This function would update all text elements based on the selected language
-            // For simplicity, we'll keep it minimal for now.
             currentLanguage = lang;
             document.querySelectorAll('[data-lang-key]').forEach(el => {
                 const key = el.getAttribute('data-lang-key');
@@ -465,11 +466,21 @@
         }
 
         // --- Facebook Integration Functions ---
-        function handleFacebookLogin() {
+        function handleFacebookLogin(isRerequest = false) {
             if (typeof FB === 'undefined') {
                 showToast("Facebook SDK belum siap. Coba lagi sesaat.");
                 return;
             }
+            
+            const loginOptions = {
+                scope: 'public_profile,email,pages_show_list,pages_read_engagement,pages_manage_posts'
+            };
+
+            // If it's a re-request, ask Facebook to show the permission dialog again.
+            if (isRerequest) {
+                loginOptions.auth_type = 'rerequest';
+            }
+
             FB.login(function(response) {
                 if (response.authResponse) {
                     showToast(translations[currentLanguage].toastFBLoginSuccess);
@@ -477,12 +488,14 @@
                 } else {
                     showToast(translations[currentLanguage].toastFBLoginFail);
                 }
-            }, {scope: 'public_profile,email,pages_show_list,pages_read_engagement,pages_manage_posts'});
+            }, loginOptions);
         }
 
+        // UPDATED: fetchFacebookPages with better error handling
         function fetchFacebookPages() {
             toggleModal(DOMElements.fbPagesModal, true);
-            DOMElements.fbPagesList.innerHTML = '<p class="text-gray-500">Memuat halaman...</p>';
+            DOMElements.fbPagesList.innerHTML = '<div class="bouncing-loader"><div></div><div></div><div></div></div>';
+
             FB.api('/me/accounts', function(response) {
                 if (response && !response.error) {
                     if (response.data && response.data.length > 0) {
@@ -494,11 +507,17 @@
                         `).join('');
                         DOMElements.fbPagesList.innerHTML = pagesHTML;
                     } else {
-                        DOMElements.fbPagesList.innerHTML = `<p class="text-gray-500">${translations[currentLanguage].toastFBNoPages}</p>`;
+                        DOMElements.fbPagesList.innerHTML = `<p class="text-gray-500 text-center">${translations[currentLanguage].toastFBNoPages}</p>`;
                     }
                 } else {
                     console.error('Error fetching pages:', response.error);
-                    DOMElements.fbPagesList.innerHTML = `<p class="text-red-500">Gagal memuat halaman. Coba login ulang.</p>`;
+                    // Display a more helpful error message and a button to re-request permissions
+                    DOMElements.fbPagesList.innerHTML = `
+                        <div class="text-center">
+                            <p class="text-red-600 font-semibold">${translations[currentLanguage].toastFBPermissionError}</p>
+                            <button onclick="handleFacebookLogin(true)" class="mt-4 bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700">Coba Lagi</button>
+                        </div>
+                    `;
                 }
             });
         }
@@ -538,7 +557,7 @@
             DOMElements.apiKeyBtn.addEventListener('click', () => toggleModal(DOMElements.apiKeyModal, true));
             DOMElements.closeApiKeyModalBtn.addEventListener('click', () => toggleModal(DOMElements.apiKeyModal, false));
             DOMElements.saveApiKeyBtn.addEventListener('click', saveApiKey);
-            DOMElements.fbLoginBtn.addEventListener('click', handleFacebookLogin);
+            DOMElements.fbLoginBtn.addEventListener('click', () => handleFacebookLogin(false)); // Initial login is not a rerequest
             DOMElements.closeFbPagesModalBtn.addEventListener('click', () => toggleModal(DOMElements.fbPagesModal, false));
             DOMElements.saveFbPagesBtn.addEventListener('click', saveSelectedPages);
             DOMElements.mainTabs.forEach(tab => tab.addEventListener('click', () => switchMainTab(tab.dataset.tab)));
