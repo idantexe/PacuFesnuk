@@ -1,0 +1,7 @@
+{
+  "name": "Berryly Belle: Style Metamorphosis",
+  "description": "A comprehensive fashion consultation and custom tailoring platform for women, featuring AI-powered body profiling, real-time styling chats, and order tracking.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
